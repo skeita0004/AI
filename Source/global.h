@@ -1,5 +1,4 @@
-#ifndef GLOBAL_H
-#define GLOBAL_H
+#pragma once
 
 // 整数型2次元ベクトル
 struct Point
@@ -7,6 +6,14 @@ struct Point
 	int x;
 	int y;
 };
+
+inline Point operator *(Point a, int b)
+{
+	Point c;
+	c.x = a.x * b;
+	c.y = a.y * b;
+	return c;
+}
 
 // 浮動小数点型2次元ベクトル
 struct Pointf
@@ -30,10 +37,10 @@ enum DIR
 	DOWN,
 	LEFT,
 	RIGHT,
-	NONE,
 	MAX_DIR
 };
 
-const int CHARA_SIZE = 32;
 
-#endif
+const int CHARA_SIZE = 32;
+const int STAGE_WIDTH = 39;
+const int STAGE_HEIGHT = 21;

@@ -1,13 +1,11 @@
 #include "Stage.h"
 
-namespace
-{
-	const int STAGE_WIDTH = 39;
-	const int STAGE_HEIGHT = 21;
-}
 
-Stage::Stage()
+
+Stage::Stage() :
+	mousePosition_()
 {
+	enemy = new Enemy({512, 256 });
 }
 
 Stage::~Stage()
@@ -16,10 +14,12 @@ Stage::~Stage()
 
 void Stage::Update()
 {
+
 }
 
 void Stage::Draw()
 {
+	SetBackgroundColor(10, 52, 199);
 	for (int y = 0; y < STAGE_HEIGHT; y++)
 	{
 		for (int x = 0; x < STAGE_WIDTH; x++)
@@ -32,4 +32,12 @@ void Stage::Draw()
 			}
 		}
 	}
+	for (int y = 1; y < STAGE_HEIGHT; y++)
+	{
+		for (int x = 1; x < STAGE_WIDTH; x++)
+		{
+			DrawLine(x + CHARA_SIZE, y * CHARA_SIZE, STAGE_WIDTH * CHARA_SIZE - CHARA_SIZE, y * CHARA_SIZE, 0xffffff); // ‰¡•ûŒü
+			DrawLine(x * CHARA_SIZE, y + CHARA_SIZE, x * CHARA_SIZE, STAGE_HEIGHT * CHARA_SIZE - CHARA_SIZE, 0xffffff); // c•ûŒü
+		}
+	}		
 }

@@ -53,8 +53,11 @@
     <ClCompile Include="Source\Stage.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Library\Input.cpp" />
     <ClCompile Include="Source\Player.cpp" />
+    <ClCompile Include="Source\Enemy.cpp" />
+    <ClCompile Include="Library\Input.cpp">
+      <Filter>Library</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
@@ -120,9 +123,14 @@
     <ClInclude Include="Source\Stage.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="Library\Input.h" />
     <ClInclude Include="Source\Player.h">
       <Filter>PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Enemy.h">
+      <Filter>PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Input.h">
+      <Filter>Library</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -141,5 +149,8 @@
     <Filter Include="ImGui">
       <UniqueIdentifier>{a717257b-67b3-4bfa-834c-1e34032b33b0}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\QueueCat_half.png" />
   </ItemGroup>
 </Project>

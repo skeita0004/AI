@@ -135,7 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Library\Input.h" />
+    <ClInclude Include="Source\Enemy.h" />
     <ClInclude Include="Source\global.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
@@ -154,6 +154,7 @@
     <ClInclude Include="Library\SceneManager.h" />
     <ClInclude Include="Library\Time.h" />
     <ClInclude Include="Source\BootScene.h" />
+    <ClInclude Include="Library\Input.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\Screen.h" />
     <ClInclude Include="Source\PlayScene.h" />
@@ -171,17 +172,21 @@
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Library\App.cpp" />
-    <ClCompile Include="Library\Input.cpp" />
     <ClCompile Include="Library\main.cpp" />
     <ClCompile Include="Library\ObjectManager.cpp" />
     <ClCompile Include="Library\SceneManager.cpp" />
     <ClCompile Include="Library\Time.cpp" />
     <ClCompile Include="Source\BootScene.cpp" />
+    <ClCompile Include="Source\Enemy.cpp" />
+    <ClCompile Include="Library\Input.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\PlayScene.cpp" />
     <ClCompile Include="Source\SceneFactory.cpp" />
     <ClCompile Include="Source\Stage.cpp" />
     <ClCompile Include="Source\TitleScene.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\QueueCat_half.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

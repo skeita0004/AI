@@ -6,6 +6,7 @@
 class Player : public GameObject
 {
 	Point position_;
+	DIR currDir_;
 
 public:
 	Player();
