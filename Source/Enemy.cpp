@@ -42,13 +42,13 @@ void Enemy::Update()
 	dirTimer_ += Time::DeltaTime();
 	moveTimer_ += Time::DeltaTime();
 	animTimer_ += Time::DeltaTime();
-	if (animTimer_ > 0.5f)
+	if (animTimer_ > 0.25f)
 	{
-		if (animIndex <= 4)
+		if (animIndex < 4)
 		{
 			animIndex += 1;
 		}
-		else
+		else if // ‚±‚±‚Ås‚Á‚½‚è—ˆ‚½‚è‚³‚¹‚é
 		{
 			animIndex = 0;
 		}
