@@ -5,22 +5,29 @@
 
 class Enemy : public GameObject
 {
-	Pointf position_;
+	Point position_;
 	int hImage_;
 	DIR currDir;
 	DIR nextDir;
 	std::string dir;
 	float dirTimer_;
 	float moveTimer_;
-	float animTimer_;
 	int* anim;
+	//static float animTimer_; 
+	//static int animIndex_;
+	// Å™Ç±ÇÍÇÕÅAãñÇ≥ÇÍÇ»Ç¢ÅB
+
 
 public:
-	Enemy(Pointf _position);
+	Enemy(Point _position);
 	~Enemy();
 
 	void Update() override;
 	void Draw() override;
 
-	void SetPosition(Pointf _position) { position_ = _position; }
+	void TurnLeft();
+	void TurnRight();
+	void TurnBack();
+
+	void SetPosition(Point _position) { position_ = _position; }
 };

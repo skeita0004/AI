@@ -1,11 +1,11 @@
 #include "Stage.h"
-
-
+#include "../Library/Input.h"
 
 Stage::Stage() :
 	mousePosition_()
 {
 	enemy = new Enemy({512, 256 });
+	player = new Player({ 64, 64 });
 }
 
 Stage::~Stage()
@@ -14,7 +14,6 @@ Stage::~Stage()
 
 void Stage::Update()
 {
-
 }
 
 void Stage::Draw()

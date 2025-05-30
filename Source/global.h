@@ -40,6 +40,11 @@ enum DIR
 	MAX_DIR
 };
 
+//enum struct NextDir
+//{
+//	UP = -
+//};
+
 
 const int CHARA_SIZE = 32;
 const int STAGE_WIDTH = 39;

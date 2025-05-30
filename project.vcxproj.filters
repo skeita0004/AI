@@ -152,5 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\QueueCat_half.png" />
+    <Image Include="data\white_cat.png" />
   </ItemGroup>
 </Project>
