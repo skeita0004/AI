@@ -1,10 +1,10 @@
-#include "Player.h"
+ï»¿#include "Player.h"
 #include "../Library/Input.h"
 #include <cassert>
 
 namespace
 {
-	int animFrame[4] {0, 1, 2, 1}; // 3•b‚ÅŒü‚«‚ª•Ï‚í‚é‚½‚ßAƒAƒjƒ[ƒVƒ‡ƒ“‚ª‰ñ‚ç‚È‚¢B
+	int animFrame[4] {0, 1, 2, 1}; // 3ç§’ã§å‘ããŒå¤‰ã‚ã‚‹ãŸã‚ã€ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒå›žã‚‰ãªã„ã€‚
 	const float ANIM_INTERVAL = 0.2f;
 	const DIR PLAYER_INIT_DIR = { DOWN };
 	const int PLAYER_IMAGE_SIZE{ 32 };
@@ -22,9 +22,10 @@ Player::Player(Point _position) :
 	currDir_(RIGHT),
 	hImage_(-1)
 {
-	hImage_ = LoadGraph("data/white_cat.png"); // ‚±‚±png‚É
+	hImage_ = LoadGraph("data/white_cat.png"); // ã“ã“pngã«
 	assert(hImage_ > 0);
 }
+
 
 Player::~Player()
 {

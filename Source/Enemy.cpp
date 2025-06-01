@@ -1,16 +1,18 @@
-#include "Enemy.h"
+﻿#include "Enemy.h"
 #include <cassert>
 #include <ctime>
 #include <cstdlib>
 
+
+// ファイルから読み込めるようにすること。
 namespace
 {
 	const int ENEMY_SIZE = 32;
 	const int ENEMY_DRAW_SIZE = 32;
 	int timer = 0;
-	// �O�b�Ō��������
-	// ���b�ňړ�
-	// �^�C�}�[�̕␳
+	// 三秒で向きかわる
+	// 半秒で移動
+	// タイマーの補正
 	const float DIR_CHANGE_TIME = 3.0f;
 	const float MOVE_TIME = 0.5f;
 	const float ANIM_INTERVAL_TIME = 0.5f;
@@ -34,7 +36,7 @@ Enemy::Enemy(Point _position) :
 	assert(hImage_ > -1);
 	Point randPosition = { GetRand(STAGE_WIDTH - 2) + 1, GetRand(STAGE_HEIGHT - 2) + 1 };
 	position_ = { randPosition.x * ENEMY_SIZE, randPosition.y * ENEMY_SIZE};
-	anim = new int[4] {0, 1, 2, 1}; // 3�b�Ō������ς�邽�߁A�A�j���[�V���������Ȃ��B
+	anim = new int[4] {0, 1, 2, 1}; // 3秒で向きが変わるため、アニメーションが回らない。
 	animTimer_ = ANIM_INTERVAL_TIME;
 	animIndex_ = 0;
 }
@@ -58,11 +60,11 @@ void Enemy::Update()
 	//if (dirTimer_ > DIR_CHANGE_TIME)
 	//{
 
-	//	//// ���̕��������炩���ߌv�Z
+	//	//// 次の方向をあらかじめ計算
 	//	//nextDir = DIR(rand() % MAX_DIR);
 
-	//	//// ���̕��������̕����Ɠ����ł���΁A�ēx�v�Z
-	//	//while (nextDir == currDir)	// �����łȂ��Ȃ�܂ŌJ��Ԃ�
+	//	//// 次の方向が今の方向と同じであれば、再度計算
+	//	//while (nextDir == currDir)	// 同じでなくなるまで繰り返す
 	//	//{
 	//	//	nextDir = DIR(rand() % MAX_DIR);
 	//	//}
@@ -115,21 +117,21 @@ void Enemy::Update()
 	moveInclease = 0.0f;
 	
 	/*
-	* �ǂɓ�����܂Ō��݂̕������ێ����Ē��i����B
+	* 壁に当たるまで現在の方向を維持して直進する。
 	* 
-	* �ǂɓ���������A���������ǂɉ����Ċ֐����Ă�
+	* 壁に当たったら、当たった壁に応じて関数を呼ぶ
 	* 
-	* switch�P�[�X�ōs���邾�낤
+	* switchケースで行けるだろう
 	*/
 
 	/* 
-	* ���̃Q�[���ɂ����č��W�́Aint�^�ł���A0�`STAGE_WIDTH�����STAGE_HEIGHT�܂ł���
-	* ����Ȃ��B�`�悷��Ƃ��ɑ���Ȃ���������邩��ł���B
-	* ���̂��߁A�����蔻��͎փQ�[���̂��̂������Ă����B
-	* ���Ɉړ�����ꏊ���������ƂɎ��A���炩���ߔ��肷�������p����B
+	* このゲームにおいて座標は、int型であり、0～STAGE_WIDTHおよびSTAGE_HEIGHTまでしか
+	* 扱わない。描画するときに足りない分足されるからである。
+	* そのため、当たり判定は蛇ゲームのものを持ってこれる。
+	* 次に移動する場所を向きごとに持つ、あらかじめ判定する方式を用いる。
 	* enum struct NextDir
-	* �X�e�[�W�̃}�X�ڕ��̃��[�v���s��
-	* ���̈ړ��ꏊ���ǂł���΁A�����蔻����s������ɁA������ς���B
+	* ステージのマス目分のループを行う
+	* 次の移動場所が壁であれば、当たり判定を行った後に、向きを変える。
 	*/ 
 
 }
@@ -137,12 +139,12 @@ void Enemy::Update()
 void Enemy::Draw()
 {
 	//int animIndex = int(animTimer_) % 4;
-	Rect imageRect[MAX_DIR] = // �ϊ��p�z��
+	Rect imageRect[MAX_DIR] = // 変換用配列
 	{
-		{anim[animIndex_] * ENEMY_SIZE, 3 * ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE}, // ��
-		{anim[animIndex_] * ENEMY_SIZE, 0 * ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE}, // ��
-		{anim[animIndex_] * ENEMY_SIZE, 1 * ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE}, // ��
-		{anim[animIndex_] * ENEMY_SIZE, 2 * ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE}  // �E
+		{anim[animIndex_] * ENEMY_SIZE, 3 * ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE}, // 上
+		{anim[animIndex_] * ENEMY_SIZE, 0 * ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE}, // 下
+		{anim[animIndex_] * ENEMY_SIZE, 1 * ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE}, // 左
+		{anim[animIndex_] * ENEMY_SIZE, 2 * ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE}  // 右
 	};
 
 	DrawRectExtendGraph(position_.x, position_.y,
@@ -154,9 +156,9 @@ void Enemy::Draw()
 #if _DEBUG
 	DrawString(0, 0, dir.c_str(), 0xffffff);
 	DrawFormatString(100, 0, 0xffffff, "NextDirChange:%f", dirTimer_);
-	DrawFormatString(300, 0, 0xffffff, "NextMove:%f", moveTimer_);
-	DrawFormatString(500, 0, 0xffffff, "NextAnim:%05f", animTimer_);
-	DrawFormatString(700, 0, 0xffffff, "AnimIndex:%d", animIndex_);
+	DrawFormatString(350, 0, 0xffffff, "NextMove:%f", moveTimer_);
+	DrawFormatString(520, 0, 0xffffff, "NextAnim:%05f", animTimer_);
+	DrawFormatString(710, 0, 0xffffff, "AnimIndex:%d", animIndex_);
 #endif
 }
 
