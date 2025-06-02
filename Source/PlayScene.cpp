@@ -6,7 +6,6 @@
 PlayScene::PlayScene()
 {
 	new Stage();
-	new Player();
 }
 
 PlayScene::~PlayScene()

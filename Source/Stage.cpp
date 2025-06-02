@@ -4,7 +4,7 @@
 Stage::Stage() :
 	mousePosition_()
 {
-	enemy = new Enemy({512, 256 });
+	enemy = new Enemy({1 , 1 });
 	player = new Player({ 64, 64 });
 }
 
@@ -28,6 +28,22 @@ void Stage::Draw()
 				DrawBox(CHARA_SIZE * x, CHARA_SIZE * y,
 					CHARA_SIZE * x + CHARA_SIZE, CHARA_SIZE * y + CHARA_SIZE,
 					0x662211, TRUE);
+				
+				 int NextEnemyX = enemy->GetPosition().x + nextPosition[enemy->GetDir()].x;
+				 int NextEnemyY = enemy->GetPosition().y + nextPosition[enemy->GetDir()].y;
+				 
+				 if (NextEnemyX　== x || NextEnemyY == y)
+				 {
+					enemy->IsNotWall(false);	// これで、Enemy側でnotを用いなくてもよくなる。
+				 }
+				
+
+				/* 
+				* 敵と壁の当たり判定を行う
+				* 壁の座標とEnemyの座標が同じということは、この中のif文に適合するということである
+				* 敵が次に移動する地点が壁の中だった場合、EnemyのIsWallをtrueにする
+				* 
+				*/
 			}
 		}
 	}

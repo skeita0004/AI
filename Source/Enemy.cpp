@@ -2,7 +2,7 @@
 #include <cassert>
 #include <ctime>
 #include <cstdlib>
-
+#include "../ImGui/imgui.h"
 
 // ファイルから読み込めるようにすること。
 namespace
@@ -17,7 +17,6 @@ namespace
 	const float MOVE_TIME = 0.5f;
 	const float ANIM_INTERVAL_TIME = 0.5f;
 
-	float moveInclease = 0.00f;
 
 	static float animTimer_;
 	static int animIndex_;
@@ -35,7 +34,7 @@ Enemy::Enemy(Point _position) :
 	hImage_ = LoadGraph("data/QueueCat_half.png");
 	assert(hImage_ > -1);
 	Point randPosition = { GetRand(STAGE_WIDTH - 2) + 1, GetRand(STAGE_HEIGHT - 2) + 1 };
-	position_ = { randPosition.x * ENEMY_SIZE, randPosition.y * ENEMY_SIZE};
+	position_ = { randPosition.x, randPosition.y};
 	anim = new int[4] {0, 1, 2, 1}; // 3秒で向きが変わるため、アニメーションが回らない。
 	animTimer_ = ANIM_INTERVAL_TIME;
 	animIndex_ = 0;
@@ -74,10 +73,11 @@ void Enemy::Update()
 	//	
 	//	dirTimer_ = 0.0f;
 	//}
+	int moveInclease = 0;
 
 	if (moveTimer_ > MOVE_TIME)
 	{
-		moveInclease = ENEMY_DRAW_SIZE;
+		moveInclease = 1;
 		moveTimer_ = 0.0f;
 	}
 
@@ -114,7 +114,7 @@ void Enemy::Update()
 	default:
 		break;
 	}
-	moveInclease = 0.0f;
+	moveInclease = 0;
 	
 	/*
 	* 壁に当たるまで現在の方向を維持して直進する。
@@ -147,8 +147,19 @@ void Enemy::Draw()
 		{anim[animIndex_] * ENEMY_SIZE, 2 * ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE}  // 右
 	};
 
-	DrawRectExtendGraph(position_.x, position_.y,
-						position_.x + CHARA_SIZE, position_.y + CHARA_SIZE,
+	ImGui::Begin("Enemy Position");
+
+	ImGui::InputInt("position.x", &position_.x);
+	ImGui::InputInt("position.y", &position_.y);
+
+	int x = position_.x * ENEMY_DRAW_SIZE;
+	int y = position_.y * ENEMY_DRAW_SIZE;
+
+	ImGui::InputInt("drawStartPosition.x", &x);
+	ImGui::InputInt("drawStartPosition.y", &y);
+
+	DrawRectExtendGraph(x, y,
+						(position_.x + 1) * ENEMY_DRAW_SIZE, (position_.y + 1) * ENEMY_DRAW_SIZE,
 						imageRect[currDir].x, imageRect[currDir].y,
 						imageRect[currDir].w, imageRect[currDir].h,
 						hImage_, TRUE);
@@ -160,6 +171,8 @@ void Enemy::Draw()
 	DrawFormatString(520, 0, 0xffffff, "NextAnim:%05f", animTimer_);
 	DrawFormatString(710, 0, 0xffffff, "AnimIndex:%d", animIndex_);
 #endif
+
+	ImGui::End();
 }
 
 void Enemy::TurnLeft()

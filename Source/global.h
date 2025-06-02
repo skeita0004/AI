@@ -40,10 +40,7 @@ enum DIR
 	MAX_DIR
 };
 
-//enum struct NextDir
-//{
-//	UP = -
-//};
+const Point NEXT_POSITION[] =
 
 
 const int CHARA_SIZE = 32;
