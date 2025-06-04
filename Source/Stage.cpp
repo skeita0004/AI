@@ -29,12 +29,16 @@ void Stage::Draw()
 					CHARA_SIZE * x + CHARA_SIZE, CHARA_SIZE * y + CHARA_SIZE,
 					0x662211, TRUE);
 				
-				 int NextEnemyX = enemy->GetPosition().x + nextPosition[enemy->GetDir()].x;
-				 int NextEnemyY = enemy->GetPosition().y + nextPosition[enemy->GetDir()].y;
+				 int NextEnemyX = enemy->GetPosition().x + NEXT_POSITION[enemy->GetDir()].x;
+				 int NextEnemyY = enemy->GetPosition().y + NEXT_POSITION[enemy->GetDir()].y;
 				 
-				 if (NextEnemyX　== x || NextEnemyY == y)
+				 if (NextEnemyX == x || NextEnemyY == y)
 				 {
 					enemy->IsNotWall(false);	// これで、Enemy側でnotを用いなくてもよくなる。
+				 }
+				 else
+				 {
+					 enemy->IsNotWall(true);
 				 }
 				
 

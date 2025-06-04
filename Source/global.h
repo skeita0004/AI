@@ -41,6 +41,9 @@ enum DIR
 };
 
 const Point NEXT_POSITION[] =
+{
+	{0,-1}, {0, 1}, {-1, 0}, {1, 0}
+};
 
 
 const int CHARA_SIZE = 32;
