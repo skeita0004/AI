@@ -14,7 +14,7 @@ namespace
 	// 半秒で移動
 	// タイマーの補正
 	const float DIR_CHANGE_TIME = 3.0f;
-	const float MOVE_TIME = 0.5f;
+	const float MOVE_TIME = 0.1f;
 	const float ANIM_INTERVAL_TIME = 0.5f;
 
 
@@ -29,13 +29,14 @@ Enemy::Enemy(Point _position) :
 	nextDir(UP),
 	dirTimer_(0.f),
 	moveTimer_(0.f),
-	isNotWall_(true)
+	isNotWall_(true),
+	state_(EState::NORMAL)
 {
 	srand(uint32_t(time(nullptr)));
 	hImage_ = LoadGraph("data/QueueCat_half.png");
 	assert(hImage_ > -1);
 	Point randPosition = { GetRand(STAGE_WIDTH - 2) + 1, GetRand(STAGE_HEIGHT - 2) + 1 };
-	currDir_ = rand() % DIR::MAX_DIR;
+	currDir_ = DIR(rand() % MAX_DIR);
 	position_ = { randPosition.x, randPosition.y};
 	anim = new int[4] {0, 1, 2, 1}; // 3秒で向きが変わるため、アニメーションが回らない。
 	animTimer_ = ANIM_INTERVAL_TIME;
@@ -82,43 +83,35 @@ void Enemy::Update()
 		moveInclease = 1;
 		moveTimer_ = 0.0f;
 	}
-
+	
 	if (isNotWall_)
 	{
 		switch (currDir_)
 		{
 		case UP:
-			dir = "UP";
-			if (position_.y - ENEMY_DRAW_SIZE >= ENEMY_DRAW_SIZE)
-			{
-				position_.y -= moveInclease;
-			}
+			dir = "UP"; // だめ
+			position_.y -= moveInclease;
 			break;
 		case DOWN:
-			dir = "DOWN";
-			if (position_.y + ENEMY_DRAW_SIZE < STAGE_HEIGHT * ENEMY_DRAW_SIZE - ENEMY_DRAW_SIZE)
-			{
-				position_.y += moveInclease;
-			}
+			dir = "DOWN"; // ここはぶつかる
+			position_.y += moveInclease;
 			break;
 		case LEFT:
-			dir = "LEFT";
-			if (position_.x - ENEMY_DRAW_SIZE >= ENEMY_DRAW_SIZE)
-			{
-				position_.x -= moveInclease;
-			}
+			dir = "LEFT"; // だめ
+			position_.x -= moveInclease;
 			break;
 		case RIGHT:
-			dir = "RIGHT";
-			if (position_.x + ENEMY_DRAW_SIZE < STAGE_WIDTH * ENEMY_DRAW_SIZE - ENEMY_DRAW_SIZE)
-			{
-				position_.x += moveInclease;
-			}
+			dir = "RIGHT";// ここもぶつかる
+			position_.x += moveInclease;
 			break;
 		default:
 			break;
 		}
 	}
+	//else
+	//{
+	//	TurnLeft();
+	//}
 	moveInclease = 0;
 	
 	/*

@@ -5,6 +5,14 @@
 
 class Enemy : public GameObject
 {
+	enum struct EState
+	{
+		NORMAL,
+		CHASE,
+		ESCAPE,
+		MAX_ESTATE
+	};
+
 	Point position_;
 	int hImage_;
 	DIR currDir_;
@@ -14,6 +22,7 @@ class Enemy : public GameObject
 	float moveTimer_;
 	int* anim;
 	bool isNotWall_;
+	EState state_;
 	//static float animTimer_; 
 	//static int animIndex_;
 	// Å™Ç±ÇÍÇÕÅAãñÇ≥ÇÍÇ»Ç¢ÅB

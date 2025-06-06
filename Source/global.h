@@ -15,6 +15,14 @@ inline Point operator *(Point a, int b)
 	return c;
 }
 
+inline Point operator +(Point a, Point b)
+{
+	Point c;
+	c.x = a.x + b.x;
+	c.y = a.y + b.y;
+	return c;
+}
+
 // 浮動小数点型2次元ベクトル
 struct Pointf
 {
@@ -42,7 +50,10 @@ enum DIR
 
 const Point NEXT_POSITION[] =
 {
-	{0,-1}, {0, 1}, {-1, 0}, {1, 0}
+	{0, -1},
+	{0, 1},
+	{-1, 0},
+	{1, 0}
 };
 
 
