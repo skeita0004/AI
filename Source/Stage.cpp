@@ -15,31 +15,26 @@ Stage::~Stage()
 
 void Stage::Update()
 {
-	for (int y = 0; y < STAGE_HEIGHT; y++)
+	Point NextEnemyPos = enemy->GetPosition() + NEXT_POSITION[enemy->GetDir()];
+
+	int x = NextEnemyPos.x;
+	int y = NextEnemyPos.y;
+
+	if (y == 0 || y == STAGE_HEIGHT - 1 || x == 0 || x == STAGE_WIDTH - 1)
 	{
-		for (int x = 0; x < STAGE_WIDTH; x++)
-		{
-			if (y == 0 || y == STAGE_HEIGHT - 1 || x == 0 || x == STAGE_WIDTH - 1)
-			{
-				/*
-				* 敵と壁の当たり判定を行う
-				* 壁の座標とEnemyが次に移動しようとしている座標が同じということは、この中のif文に適合するということである
-				* 敵が次に移動する地点が壁の中だった場合、EnemyのIsNotWall(これは壁ではない)をfalse（壁である）にする
-				*/
+		/*
+		* 敵と壁の当たり判定を行う
+		* 壁の座標とEnemyが次に移動しようとしている座標が同じということは、この中のif文に適合するということである
+		* 敵が次に移動する地点が壁の中だった場合、EnemyのIsNotWall(これは壁ではない)をfalse（壁である）にする
+		*/
 
-				Point NextEnemyPos = enemy->GetPosition() + NEXT_POSITION[enemy->GetDir()];
-
-				if ((NextEnemyPos.x == x) || (NextEnemyPos.y == y))
-				{
-					enemy->IsNotWall(false);	// これで、Enemy側でnotを用いなくてもよくなる。
-				}
-				else
-				{
-					enemy->IsNotWall(true);
-				}
-			}
-		}
+		enemy->IsNotWall(false);	// これで、Enemy側でnotを用いなくてもよくなる。
 	}
+	else
+	{
+		enemy->IsNotWall(true);
+	}
+
 }
 
 void Stage::Draw()
