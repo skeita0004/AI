@@ -20,7 +20,8 @@ Player::Player(Point _position) :
 	GameObject(),
 	position_(_position),
 	currDir_(RIGHT),
-	hImage_(-1)
+	hImage_(-1),
+	isNotWall_(true)
 {
 	hImage_ = LoadGraph("data/white_cat.png"); // ここpngに
 	assert(hImage_ > 0);
@@ -33,25 +34,38 @@ Player::~Player()
 
 void Player::Update()
 {
+
 	if (Input::IsKeyDown(KEY_INPUT_W))
 	{
-		currDir_ = UP;
-		position_.y -= CHARA_SIZE;
+		if (position_.y - 1 > 0)
+		{
+			currDir_ = UP;
+			position_.y -= 1;
+		}
 	}
 	if (Input::IsKeyDown(KEY_INPUT_S))
 	{
-		currDir_ = DOWN;
-		position_.y += CHARA_SIZE;
+		if (position_.y + 1 < STAGE_HEIGHT - 1)
+		{
+			currDir_ = DOWN;
+			position_.y += 1;
+		}
 	}
 	if (Input::IsKeyDown(KEY_INPUT_A))
 	{
-		currDir_ = LEFT;
-		position_.x -= CHARA_SIZE;
+		if (position_.x - 1 > 0)
+		{
+			currDir_ = LEFT;
+			position_.x -= 1;
+		}
 	}
 	if (Input::IsKeyDown(KEY_INPUT_D))
 	{
 		currDir_ = RIGHT;
-		position_.x += CHARA_SIZE;
+		if (position_.x + 1 < STAGE_WIDTH - 1)
+		{
+			position_.x += 1;
+		}
 	}
 }
 
@@ -72,8 +86,8 @@ void Player::Draw()
 	//DrawBox(position_.x, position_.y,
 	//	position_.x + CHARA_SIZE, position_.y + CHARA_SIZE,
 	//	0xffffff, FALSE);
-	DrawRectExtendGraph(position_.x, position_.y,
-		position_.x + PLAYER_DRAW_SIZE, position_.y + PLAYER_DRAW_SIZE,
+	DrawRectExtendGraph(position_.x * PLAYER_DRAW_SIZE, position_.y * PLAYER_DRAW_SIZE,
+		(position_.x + 1) * PLAYER_DRAW_SIZE, (position_.y + 1) * PLAYER_DRAW_SIZE,
 		imageRect[currDir_].x, imageRect[currDir_].y, 
 		imageRect[currDir_].w, imageRect[currDir_].h,
 		hImage_, TRUE);

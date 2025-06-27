@@ -161,6 +161,7 @@
     <ClInclude Include="Source\SceneFactory.h" />
     <ClInclude Include="Source\Stage.h" />
     <ClInclude Include="Source\TitleScene.h" />
+    <ClInclude Include="Source\Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImGui\imgui.cpp" />

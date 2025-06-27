@@ -136,6 +136,7 @@
     <ClInclude Include="Library\Input.h">
       <Filter>Library</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Library">

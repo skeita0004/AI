@@ -5,8 +5,8 @@
 Stage::Stage() :
 	mousePosition_()
 {
+	player = new Player({ 3, 3 });
 	enemy = new Enemy({1 , 1 });
-	player = new Player({ 64, 64 });
 }
 
 Stage::~Stage()
@@ -22,19 +22,12 @@ void Stage::Update()
 
 	if (y == 0 || y == STAGE_HEIGHT - 1 || x == 0 || x == STAGE_WIDTH - 1)
 	{
-		/*
-		* 敵と壁の当たり判定を行う
-		* 壁の座標とEnemyが次に移動しようとしている座標が同じということは、この中のif文に適合するということである
-		* 敵が次に移動する地点が壁の中だった場合、EnemyのIsNotWall(これは壁ではない)をfalse（壁である）にする
-		*/
-
-		enemy->IsNotWall(false);	// これで、Enemy側でnotを用いなくてもよくなる。
+		enemy->IsWall(true);	// これで、Enemy側でnotを用いなくてもよくなる。
 	}
 	else
 	{
-		enemy->IsNotWall(true);
+		enemy->IsWall(false);
 	}
-
 }
 
 void Stage::Draw()
@@ -63,4 +56,8 @@ void Stage::Draw()
 		}
 	}		
 
+
+	int x = 18 * CHARA_SIZE;
+	int y = 10 * CHARA_SIZE;
+	DrawBox(x, y, x + CHARA_SIZE, y + CHARA_SIZE, 0xffff00, TRUE);
 }

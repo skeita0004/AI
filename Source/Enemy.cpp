@@ -1,8 +1,7 @@
 ﻿#include "Enemy.h"
 #include <cassert>
-#include <ctime>
-#include <cstdlib>
 #include "../ImGui/imgui.h"
+#include "Player.h"
 
 // ファイルから読み込めるようにすること。
 namespace
@@ -10,16 +9,19 @@ namespace
 	const int ENEMY_SIZE = 32;
 	const int ENEMY_DRAW_SIZE = 32;
 	int timer = 0;
-	// 三秒で向きかわる
-	// 半秒で移動
-	// タイマーの補正
 	const float DIR_CHANGE_TIME = 3.0f;
-	const float MOVE_TIME = 0.1f;
+	const float MOVE_TIME = 0.2f;
 	const float ANIM_INTERVAL_TIME = 0.5f;
 
+	const float CHASE_TIME = 5.0f;
+	const float ESCAPE_TIME = 2.0f;
+
+	const int THRESHOLD_DIST = 5;
 
 	static float animTimer_;
 	static int animIndex_;
+
+	const int VIEW_DIST = 5;
 }
 
 Enemy::Enemy(Point _position) :
@@ -29,10 +31,11 @@ Enemy::Enemy(Point _position) :
 	nextDir(UP),
 	dirTimer_(0.f),
 	moveTimer_(0.f),
-	isNotWall_(true),
-	state_(EState::NORMAL)
+	isWall_(true),
+	state_(EState::NORMAL),
+	chaseTimer_(0),
+	escapeTimer_(0)
 {
-	srand(uint32_t(time(nullptr)));
 	hImage_ = LoadGraph("data/QueueCat_half.png");
 	assert(hImage_ > -1);
 	Point randPosition = { GetRand(STAGE_WIDTH - 2) + 1, GetRand(STAGE_HEIGHT - 2) + 1 };
@@ -41,6 +44,7 @@ Enemy::Enemy(Point _position) :
 	anim = new int[4] {0, 1, 2, 1}; // 3秒で向きが変わるため、アニメーションが回らない。
 	animTimer_ = ANIM_INTERVAL_TIME;
 	animIndex_ = 0;
+	pPlayer_ = FindGameObject<Player>();
 }
 
 Enemy::~Enemy()
@@ -49,89 +53,143 @@ Enemy::~Enemy()
 
 void Enemy::Update()
 {
+	switch (state_)
+	{
+	case Enemy::EState::NORMAL:
+		UpdateNormal();
+		break;
+
+	case Enemy::EState::CHASE:
+		UpdateChase();
+		break;
+
+	case Enemy::EState::ESCAPE:
+		UpdateEscape();
+		break;
+
+	case Enemy::EState::MAX_ESTATE:
+		break;
+	default:
+		break;
+	}
+}
+
+void Enemy::UpdateNormal()
+{
+	Point pPos = pPlayer_->GetPosition();
+
 	dirTimer_ += Time::DeltaTime();
-	moveTimer_ += Time::DeltaTime();
-
-	if (animTimer_ < 0)
-	{
-		animIndex_ = (++animIndex_) % 4;
-		animTimer_ = ANIM_INTERVAL_TIME + animTimer_;
-	}
-	animTimer_ -= Time::DeltaTime();
-
-	//if (dirTimer_ > DIR_CHANGE_TIME)
-	//{
-
-	//	//// 次の方向をあらかじめ計算
-	//	//nextDir = DIR(rand() % MAX_DIR);
-
-	//	//// 次の方向が今の方向と同じであれば、再度計算
-	//	//while (nextDir == currDir)	// 同じでなくなるまで繰り返す
-	//	//{
-	//	//	nextDir = DIR(rand() % MAX_DIR);
-	//	//}
-	//	//currDir = nextDir;
-
-	//	TurnLeft();
-	//	
-	//	dirTimer_ = 0.0f;
-	//}
-	int moveInclease = 0;
-
-	if (moveTimer_ > MOVE_TIME)
-	{
-		moveInclease = 1;
-		moveTimer_ = 0.0f;
-	}
 	
-	if (isNotWall_)
+	Move();
+
+	// plainBlock
 	{
-		switch (currDir_)
+		//Point pos = position_;
+		//int dist = (std::abs(pPos.x - pos.x) + std::abs(pPos.y - pos.y));
+
+		if (IsFindPlayer(pPlayer_))
 		{
-		case UP:
-			dir = "UP"; // だめ
-			position_.y -= moveInclease;
-			break;
-		case DOWN:
-			dir = "DOWN"; // ここはぶつかる
-			position_.y += moveInclease;
-			break;
-		case LEFT:
-			dir = "LEFT"; // だめ
-			position_.x -= moveInclease;
-			break;
-		case RIGHT:
-			dir = "RIGHT";// ここもぶつかる
-			position_.x += moveInclease;
-			break;
-		default:
-			break;
+			state_ = EState::CHASE;
+			printfDx("千円チャーシュー！");
 		}
+
 	}
-	//else
-	//{
-	//	TurnLeft();
-	//}
-	moveInclease = 0;
-	
-	/*
-	* 壁に当たるまで現在の方向を維持して直進する。
-	* 
-	* 壁に当たったら、当たった壁に応じて関数を呼ぶ
-	* 
-	* switchケースで行けるだろう
-	*/
+}
 
-	/* 
-	* このゲームにおいて座標は、int型であり、0～STAGE_WIDTHおよびSTAGE_HEIGHTまでしか
-	* 扱わない。描画するときに足りない分足されるからである。
-	* そのため、当たり判定は蛇ゲームのものを持ってこれる。
-	* 次に移動する場所を向きごとに持つ、あらかじめ判定する方式を用いる。
-	* enum struct NextDir
-	* ステージのマス目分のループを行う
-	* 次の移動場所が壁であれば、当たり判定を行った後に、向きを変える。
-	*/ 
+void Enemy::UpdateChase()
+{
+	float dt = Time::DeltaTime();
 
+	Point pPos = pPlayer_->GetPosition();
+	Point pos = position_;
+
+	if (chaseTimer_ > CHASE_TIME)
+	{
+		chaseTimer_ = 0;
+		state_ = EState::NORMAL;
+		printfDx("State = NORMAL");
+	}
+	else if (pPos.x  == 18 && pPos.y == 10)
+	{
+		state_ = EState::ESCAPE;
+	}
+	else
+	{
+		int xDist = std::abs(pPos.x - pos.x);
+		int yDist = std::abs(pPos.y - pos.y);
+
+		if (xDist > yDist)
+		{
+			if (pPos.x > pos.x)
+			{
+				currDir_ = RIGHT;
+			}
+			else
+			{
+				currDir_ = LEFT;
+			}
+		}
+		else if (xDist < yDist)
+		{
+			if (pPos.y > pos.y)
+			{
+				currDir_ = DOWN;
+			}
+			else
+			{
+				currDir_ = UP;
+			}
+		}
+
+		Move();
+	}
+	chaseTimer_ += dt;
+}
+
+void Enemy::UpdateEscape()
+{
+	float dt = Time::DeltaTime();
+
+	Point pPos = pPlayer_->GetPosition();
+	Point pos = position_;
+
+	if (chaseTimer_ > CHASE_TIME)
+	{
+		chaseTimer_ = 0;
+		state_ = EState::NORMAL;
+		printfDx("State = NORMAL");
+	}
+	else
+	{
+		int xDist = std::abs(pPos.x - pos.x);
+		int yDist = std::abs(pPos.y - pos.y);
+
+		if (xDist > yDist)
+		{
+			if (pPos.x > pos.x)
+			{
+				currDir_ = LEFT;
+			}
+			else
+			{
+				currDir_ = RIGHT;
+			}
+		}
+		else if (xDist < yDist)
+		{
+			if (pPos.y > pos.y)
+			{
+				currDir_ = UP;
+			}
+			else
+			{
+				currDir_ = DOWN;
+			}
+		}
+
+		Move();
+	}
+	chaseTimer_ += dt;
 }
 
 void Enemy::Draw()
@@ -168,6 +226,46 @@ void Enemy::Draw()
 	DrawFormatString(350, 0, 0xffffff, "NextMove:%f", moveTimer_);
 	DrawFormatString(520, 0, 0xffffff, "NextAnim:%05f", animTimer_);
 	DrawFormatString(710, 0, 0xffffff, "AnimIndex:%d", animIndex_);
+
+	Rect visibility{};
+	visibility.x = position_.x;
+	visibility.y = position_.y;
+	visibility.w = 1;
+	visibility.h = 1;
+
+	switch (currDir_)
+	{
+	case UP:
+		visibility.h = -5;
+		break;
+	case DOWN:
+		visibility.h = 6;
+		break;
+	case LEFT:
+		visibility.w = -5;
+		break;
+	case RIGHT:
+		visibility.w = 6;
+		break;
+
+	default:
+		break;
+	}
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	{
+		for (int i = 0; i < VIEW_DIST; i++)
+		{
+			Point view{ position_.x + (i + 1) * NEXT_POSITION[currDir_].x,
+					   position_.y + (i + 1) * NEXT_POSITION[currDir_].y};
+
+			DrawBox(view.x * ENEMY_DRAW_SIZE, view.y * ENEMY_DRAW_SIZE,
+				view.x * ENEMY_DRAW_SIZE + ENEMY_DRAW_SIZE, view.y * ENEMY_DRAW_SIZE + ENEMY_DRAW_SIZE,
+				0xff0000, TRUE);
+		}
+	}
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 #endif
 
 	ImGui::End();
@@ -243,4 +341,72 @@ void Enemy::TurnBack()
 	default:
 		break;
 	}
+}
+
+void Enemy::Move()
+{
+	moveTimer_ += Time::DeltaTime();
+
+	if (animTimer_ < 0)
+	{
+		animIndex_ = (++animIndex_) % 4;
+		animTimer_ = ANIM_INTERVAL_TIME + animTimer_;
+	}
+	animTimer_ -= Time::DeltaTime();
+
+	int moveIncrease = 0;
+
+	if (moveTimer_ > MOVE_TIME)
+	{
+		moveIncrease = 1;
+		moveTimer_ = 0.0f;
+	}
+
+	if (isWall_)
+	{
+		TurnLeft();
+	}
+	else
+	{
+		switch (currDir_)
+		{
+		case UP:
+			dir = "UP";
+			position_.y -= moveIncrease;
+			break;
+		case DOWN:
+			dir = "DOWN";
+			position_.y += moveIncrease;
+			break;
+		case LEFT:
+			dir = "LEFT";
+			position_.x -= moveIncrease;
+			break;
+		case RIGHT:
+			dir = "RIGHT";
+			position_.x += moveIncrease;
+			break;
+		default:
+			break;
+		}
+	}
+	moveIncrease = 0;
+}
+
+bool Enemy::IsFindPlayer(Player *_pPlayer)
+{
+	Point playerPos = _pPlayer->GetPosition();
+	
+	for (int i = 0; i < VIEW_DIST; i++)
+	{
+		Point view{ position_.x + (i + 1) * NEXT_POSITION[currDir_].x,
+				   position_.y + (i + 1) * NEXT_POSITION[currDir_].y };
+		
+		if (playerPos.x == view.x && playerPos.y == view.y)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
