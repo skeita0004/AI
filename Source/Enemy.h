@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Library/GameObject.h"
+#include <vector>
 #include "global.h"
 
 class Player;
@@ -23,7 +24,7 @@ public:
 	void TurnLeft();
 	void TurnRight();
 	void TurnBack();
-	void Move();
+	void Move(float _moveInterval);
 
 	void  SetPosition(Point _position) { position_ = _position; }
 	Point GetPosition()                { return position_; }
@@ -61,4 +62,13 @@ private:
 	//static float animTimer_; 
 	//static int animIndex_;
 	// ª‚±‚ê‚ÍA‹–‚³‚ê‚È‚¢B
+	//		ª20250715 ‚È‚ñ‚ÅH
+
+	/// <summary>
+	/// ‹ŠE‚Ìæ“¾
+	/// </summary>
+	/// <param name="_deg">‹–ìŠp</param>
+	/// <param name="_dist">Œ©‚¦‚é‹——£</param>
+	/// <returns></returns>
+	std::vector<Point> GetVisibility(float _deg, float _dist);
 };

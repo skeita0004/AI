@@ -75,7 +75,7 @@ void Player::Draw()
 	static int frame = 0;
 	int nowFrame = animFrame[frame];
 
-	Rect imageRect[MAX_DIR] =
+	Rect<int> imageRect[MAX_DIR] =
 	{
 		{nowFrame * PLAYER_IMAGE_SIZE, 3 * PLAYER_IMAGE_SIZE, PLAYER_IMAGE_SIZE, PLAYER_IMAGE_SIZE},
 		{nowFrame * PLAYER_IMAGE_SIZE, 0 * PLAYER_IMAGE_SIZE, PLAYER_IMAGE_SIZE, PLAYER_IMAGE_SIZE},

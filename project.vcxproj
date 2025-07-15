@@ -187,6 +187,7 @@
     <ClCompile Include="Source\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="data\backGround.png" />
     <Image Include="data\QueueCat_half.png" />
     <Image Include="data\white_cat.png" />
   </ItemGroup>

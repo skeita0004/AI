@@ -2,6 +2,7 @@
 #include <cassert>
 #include "../ImGui/imgui.h"
 #include "Player.h"
+#include <DirectXMath.h>
 
 // ファイルから読み込めるようにすること。
 namespace
@@ -22,6 +23,7 @@ namespace
 	static int animIndex_;
 
 	const int VIEW_DIST = 5;
+	const float VIEW_DEG = 45.f;
 }
 
 Enemy::Enemy(Point _position) :
@@ -80,7 +82,7 @@ void Enemy::UpdateNormal()
 
 	dirTimer_ += Time::DeltaTime();
 	
-	Move();
+	Move(MOVE_TIME);
 
 	// plainBlock
 	{
@@ -141,7 +143,7 @@ void Enemy::UpdateChase()
 			}
 		}
 
-		Move();
+		Move(0.1f);
 	}
 	chaseTimer_ += dt;
 }
@@ -187,7 +189,7 @@ void Enemy::UpdateEscape()
 			}
 		}
 
-		Move();
+		Move(MOVE_TIME);
 	}
 	chaseTimer_ += dt;
 }
@@ -195,7 +197,7 @@ void Enemy::UpdateEscape()
 void Enemy::Draw()
 {
 	//int animIndex = int(animTimer_) % 4;
-	Rect imageRect[MAX_DIR] = // 変換用配列
+	Rect<int> imageRect[MAX_DIR] = // 変換用配列
 	{
 		{anim[animIndex_] * ENEMY_SIZE, 3 * ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE}, // 上
 		{anim[animIndex_] * ENEMY_SIZE, 0 * ENEMY_SIZE, ENEMY_SIZE, ENEMY_SIZE}, // 下
@@ -227,7 +229,7 @@ void Enemy::Draw()
 	DrawFormatString(520, 0, 0xffffff, "NextAnim:%05f", animTimer_);
 	DrawFormatString(710, 0, 0xffffff, "AnimIndex:%d", animIndex_);
 
-	Rect visibility{};
+	Rect<int> visibility{};
 	visibility.x = position_.x;
 	visibility.y = position_.y;
 	visibility.w = 1;
@@ -343,7 +345,7 @@ void Enemy::TurnBack()
 	}
 }
 
-void Enemy::Move()
+void Enemy::Move(float _moveInterval)
 {
 	moveTimer_ += Time::DeltaTime();
 
@@ -356,7 +358,7 @@ void Enemy::Move()
 
 	int moveIncrease = 0;
 
-	if (moveTimer_ > MOVE_TIME)
+	if (moveTimer_ > _moveInterval)
 	{
 		moveIncrease = 1;
 		moveTimer_ = 0.0f;
@@ -409,4 +411,38 @@ bool Enemy::IsFindPlayer(Player *_pPlayer)
 	}
 
 	return false;
+}
+
+std::vector<Point> Enemy::GetVisibility(float _deg, float _dist)
+{
+	std::vector<Point> visibilities;
+
+	float rad = DirectX::XMConvertToRadians(_deg);
+
+	cosf(rad);
+
+	for (int visY = -_dist; visY <= _dist; visY++)
+	{
+		for (int visX = -_dist; visX <= _dist; visX++)
+		{
+			if (visY == 0 && visX == 0)
+			{
+				continue;
+			}
+
+			if ((visX * visX + visY * visY) > _dist * _dist) // ??????????
+			{
+				continue;
+			}
+
+			Point face = NEXT_POSITION[currDir_];
+			DirectX::XMVECTOR faceVec = DirectX::XMVectorSet(face.x, face.y, 0.f, 0.f);
+			DirectX::XMVECTOR dirVec = DirectX::XMVectorSet(visX, visY, 0.f, 0.f);
+			faceVec = DirectX::XMVector2Normalize(faceVec);
+			dirVec = DirectX::XMVector2Normalize(dirVec);
+			DirectX::XMVector2Dot(faceVec, dirVec);
+		}
+	}
+
+	return visibilities;
 }

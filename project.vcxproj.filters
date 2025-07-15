@@ -158,5 +158,6 @@
   <ItemGroup>
     <Image Include="data\QueueCat_half.png" />
     <Image Include="data\white_cat.png" />
+    <Image Include="data\backGround.png" />
   </ItemGroup>
 </Project>
