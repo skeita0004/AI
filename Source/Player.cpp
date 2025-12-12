@@ -23,8 +23,8 @@ Player::Player(Point _position) :
 	hImage_(-1),
 	isNotWall_(true)
 {
-	hImage_ = LoadGraph("data/white_cat.png"); // ここpngに
-	assert(hImage_ > 0);
+	hImage_ = LoadGraph("data/white_cat.png");
+	//assert(hImage_ > 0);
 }
 
 
@@ -97,5 +97,5 @@ void Player::Draw()
 		frame = (++frame) % 4;
 		animTimer = ANIM_INTERVAL + animTimer;
 	}
-	animTimer -= Time::DeltaTime();
+	animTimer -= DeltaTime::GetDeltaTime();
 }

@@ -1,6 +1,6 @@
-/// <summary>
-/// CoGƒtƒŒ[ƒ€ƒ[ƒN
-/// WinMain()‚©‚çn‚Ü‚è‚Ü‚·
+ï»¿/// <summary>
+/// CoGãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¯ãƒ¼ã‚¯
+/// WinMain()ã‹ã‚‰å§‹ã¾ã‚Šã¾ã™
 /// </summary>
 /// <author>N.Hanai</author>
 /// 
@@ -20,19 +20,19 @@
 
 #define CoGVersion (4.1)
 
-// ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çn‚Ü‚è‚Ü‚·
+// ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã¯ WinMain ã‹ã‚‰å§‹ã¾ã‚Šã¾ã™
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	SetGraphMode(Screen::WIDTH, Screen::HEIGHT, 32);
-	SetOutApplicationLogValidFlag(FALSE); // ƒƒO‚ğo‚³‚È‚¢
+	SetOutApplicationLogValidFlag(FALSE); // ãƒ­ã‚°ã‚’å‡ºã•ãªã„
 
 	SetMainWindowText(Screen::WINDOW_NAME);
 	SetWindowSizeExtendRate(Screen::WINDOW_EXTEND);
-	ChangeWindowMode(Screen::WINDOW_MODE); // Windowƒ‚[ƒh‚Ìê‡
+	ChangeWindowMode(Screen::WINDOW_MODE); // Windowãƒ¢ãƒ¼ãƒ‰ã®å ´åˆ
 
-	if (DxLib_Init() == -1)		// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠ‰Šú‰»ˆ—
+	if (DxLib_Init() == -1)		// ï¼¤ï¼¸ãƒ©ã‚¤ãƒ–ãƒ©ãƒªåˆæœŸåŒ–å‡¦ç†
 	{
-		return -1;			// ƒGƒ‰[‚ª‹N‚«‚½‚ç’¼‚¿‚ÉI—¹
+		return -1;			// ã‚¨ãƒ©ãƒ¼ãŒèµ·ããŸã‚‰ç›´ã¡ã«çµ‚äº†
 	}
 	SetDrawScreen(DX_SCREEN_BACK);
 	SetAlwaysRunFlag(TRUE);
@@ -41,18 +41,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	SetHookWinProc([](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) -> LRESULT /*CALLBACK*/
 	{
-		// DxLib‚ÆImGui‚ÌƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ‚ğ—¼—§‚³‚¹‚é
+		// DxLibã¨ImGuiã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ã‚’ä¸¡ç«‹ã•ã›ã‚‹
 		SetUseHookWinProcReturnValue(FALSE);
 		return ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
 	});
 #if IMGUI
-	// ImGUI‰Šú‰»
+	// ImGUIåˆæœŸåŒ–
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	io.Fonts->AddFontFromFileTTF(u8"c:\\Windows\\Fonts\\meiryo.ttc", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());	ImGui_ImplDXlib_Init();
+	io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\meiryo.ttc", 18.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());	ImGui_ImplDXlib_Init();
 #endif
 
 	AppInit();
@@ -90,10 +90,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ImGui_ImplDXlib_Shutdown();
 	ImGui::DestroyContext();
 #endif
-	DxLib_End();				// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠg—p‚ÌI—¹ˆ—
+	DxLib_End();				// ï¼¤ï¼¸ãƒ©ã‚¤ãƒ–ãƒ©ãƒªä½¿ç”¨ã®çµ‚äº†å‡¦ç†
 #ifdef _DEBUG
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 	_CrtDumpMemoryLeaks();
 #endif
-	return 0;				// ƒ\ƒtƒg‚ÌI—¹ 
+	return 0;				// ã‚½ãƒ•ãƒˆã®çµ‚äº† 
 }

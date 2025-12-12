@@ -39,7 +39,7 @@ Enemy::Enemy(Point _position) :
 	escapeTimer_(0)
 {
 	hImage_ = LoadGraph("data/QueueCat_half.png");
-	assert(hImage_ > -1);
+	//assert(hImage_ > -1);
 	Point randPosition = { GetRand(STAGE_WIDTH - 2) + 1, GetRand(STAGE_HEIGHT - 2) + 1 };
 	currDir_ = DIR(rand() % MAX_DIR);
 	position_ = { randPosition.x, randPosition.y};
@@ -76,11 +76,12 @@ void Enemy::Update()
 	}
 }
 
+
 void Enemy::UpdateNormal()
 {
 	Point pPos = pPlayer_->GetPosition();
 
-	dirTimer_ += Time::DeltaTime();
+	dirTimer_ += DeltaTime::GetDeltaTime();
 	
 	Move(MOVE_TIME);
 
@@ -100,7 +101,7 @@ void Enemy::UpdateNormal()
 
 void Enemy::UpdateChase()
 {
-	float dt = Time::DeltaTime();
+	float dt = DeltaTime::GetDeltaTime();
 
 	Point pPos = pPlayer_->GetPosition();
 	Point pos = position_;
@@ -150,7 +151,7 @@ void Enemy::UpdateChase()
 
 void Enemy::UpdateEscape()
 {
-	float dt = Time::DeltaTime();
+	float dt = DeltaTime::GetDeltaTime();
 
 	Point pPos = pPlayer_->GetPosition();
 	Point pos = position_;
@@ -347,14 +348,14 @@ void Enemy::TurnBack()
 
 void Enemy::Move(float _moveInterval)
 {
-	moveTimer_ += Time::DeltaTime();
+	moveTimer_ += DeltaTime::GetDeltaTime();
 
 	if (animTimer_ < 0)
 	{
 		animIndex_ = (++animIndex_) % 4;
 		animTimer_ = ANIM_INTERVAL_TIME + animTimer_;
 	}
-	animTimer_ -= Time::DeltaTime();
+	animTimer_ -= DeltaTime::GetDeltaTime();
 
 	int moveIncrease = 0;
 

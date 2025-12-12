@@ -1,6 +1,6 @@
 #pragma once
 /// <summary>
-/// ƒQ[ƒ€ƒIƒuƒWƒFƒNƒg‚ÌŠî’êƒNƒ‰ƒX
+/// ã‚²ãƒ¼ãƒ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®åŸºåº•ã‚¯ãƒ©ã‚¹
 /// </summary>
 /// <author>N.Hanai</author>
 
@@ -8,7 +8,7 @@
 #include <string>
 #include "SceneBase.h"
 #include "ObjectManager.h"
-#include "Time.h"
+#include "DeltaTime.h"
 
 class GameObject
 {
@@ -17,38 +17,38 @@ public:
 	virtual ~GameObject() { ObjectManager::Pop(this); }
 
 	/// <summary>
-	/// –ˆƒtƒŒ[ƒ€‚ÌXVˆ—‚Ì‚½‚ß‚ÉŒÄ‚Î‚ê‚Ü‚·
+	/// æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã®æ›´æ–°å‡¦ç†ã®ãŸã‚ã«å‘¼ã°ã‚Œã¾ã™
 	/// </summary>
 	virtual void Update() {}
 
 	/// <summary>
-	/// –ˆƒtƒŒ[ƒ€‚Ì•`‰æˆ—‚Ì‚½‚ß‚ÉŒÄ‚Î‚ê‚Ü‚·
+	/// æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã®æç”»å‡¦ç†ã®ãŸã‚ã«å‘¼ã°ã‚Œã¾ã™
 	/// </summary>
 	virtual void Draw() {}
 
 	/// <summary>
-	/// ©•ª‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğíœ‚·‚é‚ÉŒÄ‚Ño‚µ‚Ä‚­‚¾‚³‚¢
-	/// Ÿ‰ñ‚ÌUpdate‚Ì‘O‚Éíœ‚³‚ê‚Ü‚·
+	/// è‡ªåˆ†ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å‰Šé™¤ã™ã‚‹æ™‚ã«å‘¼ã³å‡ºã—ã¦ãã ã•ã„
+	/// æ¬¡å›ã®Updateã®å‰ã«å‰Šé™¤ã•ã‚Œã¾ã™
 	/// </summary>
 	void DestroyMe() { destroy = true; }
 
 	bool DestroyRequested() const { return destroy; }
 
 	/// <summary>
-	/// ƒV[ƒ“ƒ`ƒFƒ“ƒW‚·‚é‚Æ‚«‚ÉAíœ‚³‚ê‚È‚­‚·‚é
+	/// ã‚·ãƒ¼ãƒ³ãƒã‚§ãƒ³ã‚¸ã™ã‚‹ã¨ãã«ã€å‰Šé™¤ã•ã‚Œãªãã™ã‚‹
 	/// </summary>
-	/// <param name="sw">‘‚©‚È‚¯‚ê‚ÎtrueAfalse‚É‚·‚é‚Æíœ‚³‚ê‚é</param>
+	/// <param name="sw">æ›¸ã‹ãªã‘ã‚Œã°trueã€falseã«ã™ã‚‹ã¨å‰Šé™¤ã•ã‚Œã‚‹</param>
 	void StayOnSceneChange(bool sw = true) { dontDestroy = sw; }
 
 	bool IsDontDestroy() const { return dontDestroy; }
 
 	/// <summary>
-	/// •`‰æ‚Ì—Dæ‡ˆÊ‚ğw’è‚µ‚Ü‚·
-	/// ”’l‚ª‚‚¢‚Ù‚ÇAæ‚É•`‰æ‚³‚ê‚é‚Ì‚ÅA
-	/// 2D‚Å‚ ‚ê‚ÎA‰œ‚É•\¦‚³‚ê‚Ü‚·
-	/// ‰½‚àw’è‚µ‚È‚¯‚ê‚Î‚O‚Å‚·
+	/// æç”»ã®å„ªå…ˆé †ä½ã‚’æŒ‡å®šã—ã¾ã™
+	/// æ•°å€¤ãŒé«˜ã„ã»ã©ã€å…ˆã«æç”»ã•ã‚Œã‚‹ã®ã§ã€
+	/// 2Dã§ã‚ã‚Œã°ã€å¥¥ã«è¡¨ç¤ºã•ã‚Œã¾ã™
+	/// ä½•ã‚‚æŒ‡å®šã—ãªã‘ã‚Œã°ï¼ã§ã™
 	/// </summary>
-	/// <param name="odr">•`‰æ‡ˆÊ</param>
+	/// <param name="odr">æç”»é †ä½</param>
 	void SetDrawOrder(int order) {
 		drawOrder = order;
 		ObjectManager::SortByDrawOrder();
@@ -57,20 +57,20 @@ public:
 	inline int GetDrawOrder() const {	return drawOrder; }
 
 	/// <summary>
-	/// ƒ^ƒO‚ğ‚Â‚¯‚é
-	/// ƒ^ƒO‚Í‚P‚Â‚¾‚¯•t‚¯‚é‚±‚Æ‚ª‚Å‚«‚Ü‚·
+	/// ã‚¿ã‚°ã‚’ã¤ã‘ã‚‹
+	/// ã‚¿ã‚°ã¯ï¼‘ã¤ã ã‘ä»˜ã‘ã‚‹ã“ã¨ãŒã§ãã¾ã™
 	/// </summary>
-	/// <param name="_tag">ƒ^ƒO</param>
+	/// <param name="_tag">ã‚¿ã‚°</param>
 	void SetTag(std::string _tag) { tag = _tag; }
 
 	/// <summary>
-	/// w’è‚³‚ê‚½ƒ^ƒO‚Æ“¯‚¶‚©‚ğ•Ô‚·
+	/// æŒ‡å®šã•ã‚ŒãŸã‚¿ã‚°ã¨åŒã˜ã‹ã‚’è¿”ã™
 	/// </summary>
-	/// <param name="_tag">ƒ^ƒO</param>
-	/// <returns>“¯‚¶‚Å‚ ‚ê‚Îtrue</returns>
+	/// <param name="_tag">ã‚¿ã‚°</param>
+	/// <returns>åŒã˜ã§ã‚ã‚Œã°true</returns>
 	bool IsTag(std::string _tag) const { return tag == _tag; }
 private:
-	std::string tag;     // ƒ^ƒO
+	std::string tag;     // ã‚¿ã‚°
 	bool destroy;
 	bool dontDestroy;
 	int drawOrder;

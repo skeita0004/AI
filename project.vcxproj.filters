@@ -47,7 +47,7 @@
     <ClCompile Include="Library\SceneManager.cpp">
       <Filter>Library</Filter>
     </ClCompile>
-    <ClCompile Include="Library\Time.cpp">
+    <ClCompile Include="Library\DeltaTime.cpp">
       <Filter>Library</Filter>
     </ClCompile>
     <ClCompile Include="Source\Stage.cpp">
@@ -62,6 +62,8 @@
     <ClCompile Include="Source\Player.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Maze.cpp" />
+    <ClCompile Include="Library\MyDxLib.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
@@ -120,7 +122,7 @@
     <ClInclude Include="Library\SceneManager.h">
       <Filter>Library</Filter>
     </ClInclude>
-    <ClInclude Include="Library\Time.h">
+    <ClInclude Include="Library\DeltaTime.h">
       <Filter>Library</Filter>
     </ClInclude>
     <ClInclude Include="Source\global.h" />
@@ -137,6 +139,10 @@
       <Filter>Library</Filter>
     </ClInclude>
     <ClInclude Include="Source\Wall.h" />
+    <ClInclude Include="Source\Maze.hpp" />
+    <ClInclude Include="Library\MyDxLib.hpp" />
+    <ClInclude Include="Library\Rect.hpp" />
+    <ClInclude Include="Library\Vector2D.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Library">
@@ -159,5 +165,8 @@
     <Image Include="data\QueueCat_half.png" />
     <Image Include="data\white_cat.png" />
     <Image Include="data\backGround.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".editorconfig" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-#include "PlayScene.h"
+﻿#include "PlayScene.h"
 #include <DxLib.h>
 #include "Stage.h"
 #include "Player.h"
@@ -12,7 +12,7 @@ namespace
 
 PlayScene::PlayScene()
 {
-	hBackGround = LoadGraph("data/backGround.jpg");
+	//hBackGround = LoadGraph("data/backGround.jpg");
 
 	new Stage();
 }
@@ -33,5 +33,5 @@ void PlayScene::Draw()
 	DrawString(0, 0, "PLAY SCENE", GetColor(255, 255, 255));
 	DrawString(100, 400, "Push [T]Key To Title", GetColor(255, 255, 255));
 	
-	DrawExtendGraph(0, 0, Screen::WIDTH, Screen::HEIGHT, hBackGround, FALSE);
+	//DrawExtendGraph(0, 0, Screen::WIDTH, Screen::HEIGHT, hBackGround, FALSE);
 }

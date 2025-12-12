@@ -1,7 +1,7 @@
 #include "App.h"
 #include "SceneManager.h"
 #include "ObjectManager.h"
-#include "Time.h"
+#include "DeltaTime.h"
 #include <DxLib.h>
 #include "Input.h"
 
@@ -9,7 +9,7 @@ void AppInit()
 {
 	ObjectManager::Init();
 	SceneManager::Init();
-	Time::Init();
+	DeltaTime::Init();
 }
 
 void AppUpdate()
@@ -21,7 +21,7 @@ void AppUpdate()
 
 void AppDraw()
 {
-	Time::Refresh();
+	DeltaTime::Refresh();
 	SceneManager::Draw();
 	ObjectManager::Draw();
 }

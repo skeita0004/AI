@@ -1,12 +1,24 @@
-#include "Stage.h"
+ï»¿#include "Stage.h"
 #include "../Library/Input.h"
 #include "../ImGui/imgui.h"
+
+namespace
+{
+	const int MAZE_WIDTH{39};
+	const int MAZE_HEIGHT{21};
+}
 
 Stage::Stage() :
 	mousePosition_()
 {
 	player = new Player({ 3, 3 });
 	enemy = new Enemy({1 , 1 });
+
+	maze_ = new Maze(MAZE_WIDTH,
+					 MAZE_HEIGHT);
+	//mazeData_ = maze_->Generate();
+	mazeData_ = maze_->Load();
+	//maze_->Save();
 }
 
 Stage::~Stage()
@@ -22,7 +34,7 @@ void Stage::Update()
 
 	if (y == 0 || y == STAGE_HEIGHT - 1 || x == 0 || x == STAGE_WIDTH - 1)
 	{
-		enemy->IsWall(true);	// ‚±‚ê‚ÅAEnemy‘¤‚Ånot‚ğ—p‚¢‚È‚­‚Ä‚à‚æ‚­‚È‚éB
+		enemy->IsWall(true);	// ã“ã‚Œã§ã€Enemyå´ã§notã‚’ç”¨ã„ãªãã¦ã‚‚ã‚ˆããªã‚‹ã€‚
 	}
 	else
 	{
@@ -32,30 +44,84 @@ void Stage::Update()
 
 void Stage::Draw()
 {
-	for (int y = 0; y < STAGE_HEIGHT; y++)
+	for (int i = 0; i < mazeData_.size(); i++)
 	{
-		for (int x = 0; x < STAGE_WIDTH; x++)
+		int x = i % MAZE_WIDTH;
+		int y = i / MAZE_WIDTH;
+		
+		switch (mazeData_[i])
 		{
-			if (y == 0 || y == STAGE_HEIGHT - 1 || x == 0 || x == STAGE_WIDTH - 1)
-			{
-				DrawBox(CHARA_SIZE * x, CHARA_SIZE * y,
-					CHARA_SIZE * x + CHARA_SIZE, CHARA_SIZE * y + CHARA_SIZE,
-					0x662211, TRUE);
-			}
+			case Maze::MazeState::WALL:
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0x0B1D51,
+						TRUE);
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0x000000,
+						FALSE);
+				break;
+			case Maze::MazeState::OUTER_WALL:
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0x725CAD,
+						TRUE);
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0x000000,
+						FALSE);
+				break;
+			case Maze::MazeState::WAY:
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0xffffff,
+						TRUE);
+				break;
+			case Maze::MazeState::START:
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0xFFE3A9,
+						TRUE);
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0x000000,
+						FALSE);
+				break;
+			case Maze::MazeState::GOAL:
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0x8CCDEB,
+						TRUE);
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0x000000,
+						FALSE);
+				break;
+			default:
+				break;
 		}
 	}
 
-	for (int y = 1; y < STAGE_HEIGHT; y++)
-	{
-		for (int x = 1; x < STAGE_WIDTH; x++)
-		{
-			DrawLine(x + CHARA_SIZE, y * CHARA_SIZE, STAGE_WIDTH * CHARA_SIZE - CHARA_SIZE, y * CHARA_SIZE, 0xffffff); // ‰¡•ûŒü
-			DrawLine(x * CHARA_SIZE, y + CHARA_SIZE, x * CHARA_SIZE, STAGE_HEIGHT * CHARA_SIZE - CHARA_SIZE, 0xffffff); // c•ûŒü
-		}
-	}		
 
-
-	int x = 18 * CHARA_SIZE;
-	int y = 10 * CHARA_SIZE;
-	DrawBox(x, y, x + CHARA_SIZE, y + CHARA_SIZE, 0xffff00, TRUE);
+	//int x = 18 * CHARA_SIZE;
+	//int y = 10 * CHARA_SIZE;
+	//DrawBox(x, y, x + CHARA_SIZE, y + CHARA_SIZE, 0xffff00, TRUE);
 }

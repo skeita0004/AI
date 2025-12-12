@@ -1,4 +1,4 @@
-#include "time.h"
+#include "DeltaTime.h"
 #include <Windows.h>
 
 namespace {
@@ -6,20 +6,20 @@ namespace {
 	LARGE_INTEGER current;
 	float deltaTime;
 };
-void Time::Init()
+void DeltaTime::Init()
 {
 	QueryPerformanceFrequency(&freq);
 	QueryPerformanceCounter(&current);
 }
 
-void Time::Refresh()
+void DeltaTime::Refresh()
 {
 	LARGE_INTEGER last = current;
 	QueryPerformanceCounter(&current);
 	deltaTime = static_cast<float >(current.QuadPart - last.QuadPart) / freq.QuadPart;
 }
 
-float Time::DeltaTime()
+float DeltaTime::GetDeltaTime()
 {
 	return deltaTime;
 }

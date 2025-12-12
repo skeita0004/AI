@@ -1,7 +1,8 @@
 #pragma once
 
-namespace Time {
+namespace DeltaTime
+{
 	void Init();
 	void Refresh();
-	float DeltaTime();
+	float GetDeltaTime();
 };
