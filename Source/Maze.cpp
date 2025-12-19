@@ -12,6 +12,13 @@ Maze::Maze(int _width, int _height) :
 	length_(width_ * height_)
 {
 	maze_ = std::vector<MazeState>(length_, MazeState::WALL);
+
+	// 相互mapの初期化
+	mazeLUT_.insert({'W', MazeState::WALL});
+	mazeLUT_.insert({'O', MazeState::OUTER_WALL});
+	mazeLUT_.insert({' ', MazeState::WAY});
+	mazeLUT_.insert({'S', MazeState::START});
+	mazeLUT_.insert({'G', MazeState::GOAL});
 }
 
 Maze::~Maze()
@@ -143,26 +150,9 @@ void Maze::Save()
 
 	for (int i = 0; i < maze_.size(); i++)
 	{
-		switch (maze_[i])
-		{
-			case Maze::MazeState::WALL:
-				file << "W";
-				break;
-			case Maze::MazeState::OUTER_WALL:
-				file << "O";
-				break;
-			case Maze::MazeState::WAY:
-				file << " ";
-				break;
-			case Maze::MazeState::START:
-				file << "S";
-				break;
-			case Maze::MazeState::GOAL:
-				file << "G";
-				break;
-			default:
-				break;
-		}
+		// キーのエラーチェックしないと駄目だよ！
+		file << mazeLUT_.right.at(maze_[i]);
+
 		if (i % width_ + 1 == width_)
 		{
 			file << "\n";
@@ -201,8 +191,8 @@ std::vector<Maze::MazeState>& Maze::Load()
 
 	std::string line{};
 	std::ifstream file(filePath);
-	// ヘッダ読み込み
 	
+	// ヘッダ読み込み
 	int cammaPos = 0;
 	std::getline(file, line);
 	for (int i = 0; i < line.size(); i++)
@@ -212,13 +202,33 @@ std::vector<Maze::MazeState>& Maze::Load()
 			cammaPos = i;
 		}
 	}
-
 	width_  = std::stoi(line.substr(0, cammaPos));
 	height_ = std::stoi(line.substr(cammaPos + 1));
 
-	
+	// 迷路データ読み込み
+	maze_.clear();
+	int lineCount = 0;
+	while (std::getline(file, line))
+	{
+		for (int i = 0; i < line.size(); i++)
+		{
+			// keyのエラーチェックしなさい。
+			maze_.push_back(mazeLUT_.left.at(line[i]));
+		}
+		lineCount++;
+	}
 
 	return maze_;
+}
+
+int Maze::GetStart()
+{
+	return 1 + width_;
+}
+
+int Maze::GetGoal()
+{
+	return ((length_ - 1) - 1) - width_;
 }
 
 void Maze::SetOuterWall()

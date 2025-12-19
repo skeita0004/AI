@@ -2,6 +2,7 @@
 #include <vector>
 #include <stack>
 #include <random>
+#include <boost/bimap/bimap.hpp>
 
 class Maze
 {
@@ -26,6 +27,9 @@ public:
 	void Save();
 	std::vector<MazeState>& Load();
 
+	int GetStart();
+	int GetGoal();
+
 private:
 	enum class Dir : int
 	{
@@ -40,6 +44,9 @@ private:
 	int length_;
 
 	std::vector<MazeState> maze_;
+	
+	typedef boost::bimaps::bimap<char, MazeState> bimap;
+	bimap mazeLUT_;
 
 	/// @brief 迷路の外周部分に、破壊できない壁を設定
 	void SetOuterWall();

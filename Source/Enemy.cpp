@@ -55,25 +55,25 @@ Enemy::~Enemy()
 
 void Enemy::Update()
 {
-	switch (state_)
-	{
-	case Enemy::EState::NORMAL:
-		UpdateNormal();
-		break;
+	//switch (state_)
+	//{
+	//case Enemy::EState::NORMAL:
+	//	UpdateNormal();
+	//	break;
 
-	case Enemy::EState::CHASE:
-		UpdateChase();
-		break;
+	//case Enemy::EState::CHASE:
+	//	UpdateChase();
+	//	break;
 
-	case Enemy::EState::ESCAPE:
-		UpdateEscape();
-		break;
+	//case Enemy::EState::ESCAPE:
+	//	UpdateEscape();
+	//	break;
 
-	case Enemy::EState::MAX_ESTATE:
-		break;
-	default:
-		break;
-	}
+	//case Enemy::EState::MAX_ESTATE:
+	//	break;
+	//default:
+	//	break;
+	//}
 }
 
 

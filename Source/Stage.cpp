@@ -11,7 +11,7 @@ namespace
 Stage::Stage() :
 	mousePosition_()
 {
-	player = new Player({ 3, 3 });
+	//player = new Player({ 3, 3 });
 	enemy = new Enemy({1 , 1 });
 
 	maze_ = new Maze(MAZE_WIDTH,
