@@ -1,6 +1,7 @@
 ﻿#include "Stage.h"
 #include "../Library/Input.h"
 #include "../ImGui/imgui.h"
+#include "Explorer.h"
 
 namespace
 {
@@ -9,16 +10,21 @@ namespace
 }
 
 Stage::Stage() :
-	mousePosition_()
+	pExplorer_(),
+	pMaze_(),
+	mazeData_()
 {
-	//player = new Player({ 3, 3 });
-	enemy = new Enemy({1 , 1 });
-
-	maze_ = new Maze(MAZE_WIDTH,
+	pMaze_ = new Maze(MAZE_WIDTH,
 					 MAZE_HEIGHT);
-	//mazeData_ = maze_->Generate();
-	mazeData_ = maze_->Load();
-	//maze_->Save();
+	mazeData_ = pMaze_->Generate();
+	mazeData_ = pMaze_->Load();
+
+	int x, y;
+	x = pMaze_->GetStart() % MAZE_WIDTH;
+	y = pMaze_->GetStart() / MAZE_WIDTH;
+
+	pExplorer_ = new Explorer({x, y});
+	SetDrawOrder(INT_MAX - 1);
 }
 
 Stage::~Stage()
@@ -27,19 +33,6 @@ Stage::~Stage()
 
 void Stage::Update()
 {
-	Point NextEnemyPos = enemy->GetPosition() + NEXT_POSITION[enemy->GetDir()];
-
-	int x = NextEnemyPos.x;
-	int y = NextEnemyPos.y;
-
-	if (y == 0 || y == STAGE_HEIGHT - 1 || x == 0 || x == STAGE_WIDTH - 1)
-	{
-		enemy->IsWall(true);	// これで、Enemy側でnotを用いなくてもよくなる。
-	}
-	else
-	{
-		enemy->IsWall(false);
-	}
 }
 
 void Stage::Draw()
@@ -119,9 +112,16 @@ void Stage::Draw()
 				break;
 		}
 	}
+}
 
+void Stage::SetMazeState(Point _pos, Maze::MazeState _state)
+{
+	int index = MAZE_WIDTH * _pos.y + _pos.x;
+	mazeData_[index] = _state;
+}
 
-	//int x = 18 * CHARA_SIZE;
-	//int y = 10 * CHARA_SIZE;
-	//DrawBox(x, y, x + CHARA_SIZE, y + CHARA_SIZE, 0xffff00, TRUE);
+Maze::MazeState Stage::GetMazeState(Point _pos)
+{
+	int index = MAZE_WIDTH * _pos.y + _pos.x;
+	return mazeData_[index];
 }

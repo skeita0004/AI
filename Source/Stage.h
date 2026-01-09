@@ -3,10 +3,9 @@
 #include "../Library/GameObject.h"
 #include "Screen.h"
 #include "global.h"
-#include "Enemy.h"
-#include "Player.h"
 #include "Maze.hpp"
-class Maze;
+
+class Explorer;
 
 class Stage : public GameObject
 {
@@ -17,11 +16,12 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	void SetMazeState(Point _pos, Maze::MazeState _state);
+	Maze::MazeState GetMazeState(Point _pos);
+
 private:
-	Point mousePosition_;
-	Enemy* enemy;
-	Player* player;
-	Maze* maze_;
+	Explorer* pExplorer_;
+	Maze*     pMaze_;
 
 	std::vector<Maze::MazeState> mazeData_;
 };

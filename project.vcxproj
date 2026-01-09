@@ -144,6 +144,7 @@
     <ClInclude Include="Library\Rect.hpp" />
     <ClInclude Include="Library\Vector2D.hpp" />
     <ClInclude Include="Source\Enemy.h" />
+    <ClInclude Include="Source\Explorer.h" />
     <ClInclude Include="Source\global.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
@@ -190,6 +191,7 @@
     <ClCompile Include="Source\BootScene.cpp" />
     <ClCompile Include="Source\Enemy.cpp" />
     <ClCompile Include="Library\Input.cpp" />
+    <ClCompile Include="Source\Explorer.cpp" />
     <ClCompile Include="Source\Maze.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\PlayScene.cpp" />

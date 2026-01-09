@@ -38,14 +38,16 @@ Enemy::Enemy(Point _position) :
 	chaseTimer_(0),
 	escapeTimer_(0)
 {
+	SetDrawOrder(0);
+
 	hImage_ = LoadGraph("data/QueueCat_half.png");
-	//assert(hImage_ > -1);
-	Point randPosition = { GetRand(STAGE_WIDTH - 2) + 1, GetRand(STAGE_HEIGHT - 2) + 1 };
+
 	currDir_ = DIR(rand() % MAX_DIR);
-	position_ = { randPosition.x, randPosition.y};
+
 	anim = new int[4] {0, 1, 2, 1}; // 3秒で向きが変わるため、アニメーションが回らない。
 	animTimer_ = ANIM_INTERVAL_TIME;
 	animIndex_ = 0;
+
 	pPlayer_ = FindGameObject<Player>();
 }
 
@@ -55,25 +57,7 @@ Enemy::~Enemy()
 
 void Enemy::Update()
 {
-	//switch (state_)
-	//{
-	//case Enemy::EState::NORMAL:
-	//	UpdateNormal();
-	//	break;
 
-	//case Enemy::EState::CHASE:
-	//	UpdateChase();
-	//	break;
-
-	//case Enemy::EState::ESCAPE:
-	//	UpdateEscape();
-	//	break;
-
-	//case Enemy::EState::MAX_ESTATE:
-	//	break;
-	//default:
-	//	break;
-	//}
 }
 
 

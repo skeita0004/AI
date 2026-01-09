@@ -64,6 +64,7 @@
     </ClCompile>
     <ClCompile Include="Source\Maze.cpp" />
     <ClCompile Include="Library\MyDxLib.cpp" />
+    <ClCompile Include="Source\Explorer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
@@ -143,6 +144,7 @@
     <ClInclude Include="Library\MyDxLib.hpp" />
     <ClInclude Include="Library\Rect.hpp" />
     <ClInclude Include="Library\Vector2D.hpp" />
+    <ClInclude Include="Source\Explorer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Library">
