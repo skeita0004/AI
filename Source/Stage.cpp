@@ -16,8 +16,9 @@ Stage::Stage() :
 {
 	pMaze_ = new Maze(MAZE_WIDTH,
 					 MAZE_HEIGHT);
-	mazeData_ = pMaze_->Generate();
+	//mazeData_ = pMaze_->Generate();
 	mazeData_ = pMaze_->Load();
+	//pMaze_->Save();
 
 	int x, y;
 	x = pMaze_->GetStart() % MAZE_WIDTH;

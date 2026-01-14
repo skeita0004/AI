@@ -1,5 +1,7 @@
 ﻿#include "Explorer.h"
 #include <../ImGui/imgui.h>
+#include <stack>
+#include <map>
 
 namespace
 {
@@ -261,11 +263,56 @@ void Explorer::Move(float _moveInterval)
 
 void Explorer::FindPathDFS()
 {
+	enum SearchState : int8_t
+	{
+		NOT_YET,
+		DONE,
+		TO_GOAL
+	};
+
+	struct FinderState
+	{
+		Point pos;
+		std::map<DIR, SearchState> nodeInfo;
+	};
+
+	FinderState finderState;
+	bool goaled{ false };
+	std::stack<FinderState> node;
+
 	// 三方が壁であるとき、そこがゴールの位置と異なる場合、
 	// その経路は不要であるので、壁にする。
 	// DFSを用いる
 
 	// 2分木を作る
+
+	// 最初に4方向調べ、進める方向を記録し、スタックへとpushする
+	for (int i = 0; i < MAX_DIR; i++)
+	{
+
+	}
+	node.push(finderState);
+
+
+	while (true)
+	{
+		if (goaled)
+		{
+			break;
+		}
+	// 進める方向のうち、ランダムな方向を選び、そちらへ進む
+	// 
+	// もし壁に突き当たったら、自分の現在位置とゴールの位置を比較し、
+	// 一致していればゴールフラグをtrueにする
+	// 一致していなければ、左右を確認し、道がある方へ進んでいく
+	// 道がなければ行き止まりなので、スタックの先頭を読み、その位置へ戻り、
+	// 自身が進んだ方向を壁として設定する
+	// 
+	// 分岐があった場合、スタックへとpushする
+	// 
+	// 戻ってきたときに、状態：了の分岐に壁を設定する
+	// 
+	}
 
 }
 
