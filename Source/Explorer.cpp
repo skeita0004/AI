@@ -314,6 +314,11 @@ void Explorer::FindPathDFS()
 	// 
 	}
 
+	// ここでは、goaledがtrueになったあとの後処理を行う
+	// ゴールへと至らないことが確定している、未探査の分岐の入口をすべて塞いでしまう。
+	// wallでもいいが、別の状態を追加するのもあり。(透明な壁として、内部的に扱う)
+	// 
+
 }
 
 void Explorer::FindPathBFS()
