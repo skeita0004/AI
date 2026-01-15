@@ -4,6 +4,8 @@
 #include <vector>
 #include "global.h"
 
+class Stage;
+
 class Explorer : public GameObject
 {
 public:
@@ -45,6 +47,8 @@ private:
 
 	int hImage_;
 	Point position_;
+
+	Stage* pStage_;
 
 	DIR currDir_;
 	DIR nextDir_;

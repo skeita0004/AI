@@ -2,6 +2,8 @@
 #include <../ImGui/imgui.h>
 #include <stack>
 #include <map>
+#include "Maze.hpp"
+#include "Stage.h"
 
 namespace
 {
@@ -28,6 +30,7 @@ Explorer::Explorer(Point _position) :
 	anim(nullptr),
 	isWall_(false)
 {
+	pStage_ = FindGameObject<Stage>();
 	hImage_ = LoadGraph("data/QueueCat_half.png");
 	anim = new int[4]
 		{
@@ -265,6 +268,7 @@ void Explorer::FindPathDFS()
 {
 	enum SearchState : int8_t
 	{
+		NONE,
 		NOT_YET,
 		DONE,
 		TO_GOAL
@@ -289,10 +293,12 @@ void Explorer::FindPathDFS()
 	// 最初に4方向調べ、進める方向を記録し、スタックへとpushする
 	for (int i = 0; i < MAX_DIR; i++)
 	{
-
+		if (pStage_->GetMazeState(finderState.pos + NEXT_POSITION[i]) == Maze::MazeState::WALL)
+		{
+			finderState.nodeInfo.emplace((DIR)i, NONE);
+		}
 	}
 	node.push(finderState);
-
 
 	while (true)
 	{
@@ -301,9 +307,17 @@ void Explorer::FindPathDFS()
 			break;
 		}
 	// 進める方向のうち、ランダムな方向を選び、そちらへ進む
-	// 
+		
+		
+
 	// もし壁に突き当たったら、自分の現在位置とゴールの位置を比較し、
 	// 一致していればゴールフラグをtrueにする
+	
+		//if (finderState.pos == )
+		{
+
+		}
+
 	// 一致していなければ、左右を確認し、道がある方へ進んでいく
 	// 道がなければ行き止まりなので、スタックの先頭を読み、その位置へ戻り、
 	// 自身が進んだ方向を壁として設定する
