@@ -19,6 +19,14 @@ public:
 	void SetMazeState(Point _pos, Maze::MazeState _state);
 	Maze::MazeState GetMazeState(Point _pos);
 
+	Point IndexToPoint(int _index);
+	int   PointToIndex(Point _pos);
+
+	Maze* GetMazeP()
+	{
+		return pMaze_;
+	}
+
 private:
 	Explorer* pExplorer_;
 	Maze*     pMaze_;

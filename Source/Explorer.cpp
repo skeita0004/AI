@@ -1,9 +1,11 @@
 ﻿#include "Explorer.h"
 #include <../ImGui/imgui.h>
 #include <stack>
+#include <queue>
 #include <map>
 #include "Maze.hpp"
 #include "Stage.h"
+#include "Input.h"
 
 namespace
 {
@@ -31,6 +33,7 @@ Explorer::Explorer(Point _position) :
 	isWall_(false)
 {
 	pStage_ = FindGameObject<Stage>();
+	pMaze_  = pStage_->GetMazeP();
 	hImage_ = LoadGraph("data/QueueCat_half.png");
 	anim = new int[4]
 		{
@@ -61,11 +64,14 @@ void Explorer::Update()
 	// 
 
 	// FindPath() <- 1フレームに１マスごとやってほしいのよね。(西麻布のママより)
+	if (Input::IsKeyDown(KEY_INPUT_RETURN))
+	{
+		FindPathBFS();
+	}
 
+	//dirTimer_ += DeltaTime::GetDeltaTime();
 
-	dirTimer_ += DeltaTime::GetDeltaTime();
-
-	Move(MOVE_TIME);
+	//Move(MOVE_TIME);
 }
 
 void Explorer::Draw()
@@ -337,7 +343,52 @@ void Explorer::FindPathDFS()
 
 void Explorer::FindPathBFS()
 {
+	// 上下左右みる
+	// いける方にいく
+	// 
 
+	Point currPos{pStage_->IndexToPoint(pMaze_->GetStart())};
+	std::queue<Point> BFSQueue;
+
+	BFSQueue.push(currPos);
+	pStage_->SetMazeState(currPos, Maze::MazeState::FOUND); // スタート地点を探索済みにする
+
+	while (true)
+	{
+		// ここで次の一歩で行ける道を探している
+		int wayCount{0};
+		for (int i = 0; i < DIR::MAX_DIR; i++)
+		{
+			Point tmp = currPos + NEXT_POSITION[i];
+			if (pStage_->GetMazeState(tmp) == Maze::MazeState::WAY)
+			{
+				// 行ける場所をenq
+				BFSQueue.push(tmp);
+
+				// 行ける場所を探索済みにする
+				pStage_->SetMazeState(tmp, Maze::MazeState::FOUND);
+				wayCount++;
+			}
+		}
+		if (wayCount == 0)
+		{
+			if (BFSQueue.size() > 0)
+			{
+				BFSQueue.pop();
+			}
+			if (BFSQueue.size() > 0)
+			{
+				currPos = BFSQueue.front();
+			}
+			continue;
+		}
+		if (currPos == pStage_->IndexToPoint(pMaze_->GetGoal()))
+		{
+			break;
+		}
+		BFSQueue.pop();
+		currPos = BFSQueue.front();
+	}
 }
 
 void Explorer::FindPathDijkstra()

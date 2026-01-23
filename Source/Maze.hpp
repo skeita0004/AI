@@ -1,4 +1,6 @@
-﻿#include "Vector2D.hpp"
+﻿#pragma once
+
+#include "Vector2D.hpp"
 #include <vector>
 #include <stack>
 #include <random>
@@ -14,6 +16,7 @@ public:
 		WAY,
 		START,
 		GOAL,
+		FOUND,
 		MAX_STATE
 	};
 

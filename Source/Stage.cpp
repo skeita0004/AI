@@ -108,6 +108,19 @@ void Stage::Draw()
 						32 * y + 32,
 						0x000000,
 						FALSE);
+			case Maze::MazeState::FOUND:
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0xFF0000,
+						TRUE);
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0x000000,
+						FALSE);
 				break;
 			default:
 				break;
@@ -125,4 +138,14 @@ Maze::MazeState Stage::GetMazeState(Point _pos)
 {
 	int index = MAZE_WIDTH * _pos.y + _pos.x;
 	return mazeData_[index];
+}
+
+Point Stage::IndexToPoint(int _index)
+{
+	return Point(_index % STAGE_WIDTH, _index / STAGE_WIDTH);
+}
+
+int Stage::PointToIndex(Point _pos)
+{
+	return MAZE_WIDTH * _pos.y + _pos.x;
 }

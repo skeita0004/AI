@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 inline const float ToDegree(float& _radian)
 {
@@ -10,7 +10,7 @@ inline const float ToRadian(float& _degree)
 	return _degree * DX_PI_F / 180.f;
 }
 
-// ®”Œ^2ŸŒ³ƒxƒNƒgƒ‹
+// æ•´æ•°å‹2æ¬¡å…ƒãƒ™ã‚¯ãƒˆãƒ«
 struct Point
 {
 	int x;
@@ -42,7 +42,7 @@ inline Point operator +(Point a, Point b)
 	return c;
 }
 
-// •‚“®¬”“_Œ^2ŸŒ³ƒxƒNƒgƒ‹
+// æµ®å‹•å°æ•°ç‚¹å‹2æ¬¡å…ƒãƒ™ã‚¯ãƒˆãƒ«
 struct Pointf
 {
 	float x;
@@ -58,7 +58,13 @@ struct Pointf
 	}
 };
 
-// ‹éŒ`
+inline bool operator ==(Point _a, Point _b)
+{
+	return _a.x == _b.x and _a.y == _b.y;
+}
+
+
+// çŸ©å½¢
 template <typename TYPE>
 struct Rect
 {

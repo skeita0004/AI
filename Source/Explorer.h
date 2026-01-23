@@ -5,6 +5,7 @@
 #include "global.h"
 
 class Stage;
+class Maze;
 
 class Explorer : public GameObject
 {
@@ -49,6 +50,7 @@ private:
 	Point position_;
 
 	Stage* pStage_;
+	Maze* pMaze_;
 
 	DIR currDir_;
 	DIR nextDir_;
@@ -61,4 +63,6 @@ private:
 	int* anim;
 
 	bool isWall_;
+
+
 };
