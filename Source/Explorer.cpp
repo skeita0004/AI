@@ -355,11 +355,16 @@ void Explorer::FindPathBFS()
 
 	while (true)
 	{
-		// ここで次の一歩で行ける道を探している
+		static int stepCount = 0;
+		
 		int wayCount{0};
+		// ここで次の一歩で行ける道を探している
 		for (int i = 0; i < DIR::MAX_DIR; i++)
 		{
+			// 現在の位置に、ある方向に向けて一歩先の座標を求める。
 			Point tmp = currPos + NEXT_POSITION[i];
+
+
 			if (pStage_->GetMazeState(tmp) == Maze::MazeState::WAY)
 			{
 				// 行ける場所をenq
@@ -367,27 +372,27 @@ void Explorer::FindPathBFS()
 
 				// 行ける場所を探索済みにする
 				pStage_->SetMazeState(tmp, Maze::MazeState::FOUND);
+				pStage_->SetStepCount(tmp, stepCount);
 				wayCount++;
 			}
 		}
+
+		// 4方向がふさがっていたら、次のループに進む
 		if (wayCount == 0)
 		{
 			if (BFSQueue.size() > 0)
 			{
+				stepCount++;
+				currPos = BFSQueue.front();
 				BFSQueue.pop();
 			}
-			if (BFSQueue.size() > 0)
+			else
 			{
-				currPos = BFSQueue.front();
+				// キューのサイズが0なら終了 <- 嫌過ぎるけど、ゴールしたと見做すしかない
+				break;
 			}
 			continue;
 		}
-		if (currPos == pStage_->IndexToPoint(pMaze_->GetGoal()))
-		{
-			break;
-		}
-		BFSQueue.pop();
-		currPos = BFSQueue.front();
 	}
 }
 

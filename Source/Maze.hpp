@@ -34,6 +34,7 @@ public:
 	int GetGoal();
 
 private:
+
 	enum class Dir : int
 	{
 		UP,

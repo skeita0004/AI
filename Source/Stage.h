@@ -17,6 +17,8 @@ public:
 	void Draw() override;
 
 	void SetMazeState(Point _pos, Maze::MazeState _state);
+	void SetStepCount(Point _pos, int _stepCount);
+
 	Maze::MazeState GetMazeState(Point _pos);
 
 	Point IndexToPoint(int _index);
@@ -31,5 +33,11 @@ private:
 	Explorer* pExplorer_;
 	Maze*     pMaze_;
 
-	std::vector<Maze::MazeState> mazeData_;
+	struct TileInfo
+	{
+		Maze::MazeState mzState;
+		int             stepCount;
+	};
+
+	std::vector<TileInfo> mazeData_;
 };

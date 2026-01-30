@@ -17,8 +17,17 @@ Stage::Stage() :
 	pMaze_ = new Maze(MAZE_WIDTH,
 					 MAZE_HEIGHT);
 	//mazeData_ = pMaze_->Generate();
-	mazeData_ = pMaze_->Load();
-	//pMaze_->Save();
+	std::vector<Maze::MazeState> tmp;
+	tmp = pMaze_->Load();
+
+	mazeData_.resize(tmp.size());
+
+	for (auto item : tmp)
+	{
+		static int i = 0;
+		mazeData_[i].mzState = item;
+		i++;
+	}
 
 	int x, y;
 	x = pMaze_->GetStart() % MAZE_WIDTH;
@@ -43,7 +52,7 @@ void Stage::Draw()
 		int x = i % MAZE_WIDTH;
 		int y = i / MAZE_WIDTH;
 		
-		switch (mazeData_[i])
+		switch (mazeData_[i].mzState)
 		{
 			case Maze::MazeState::WALL:
 				DrawBox(32 * x,
@@ -108,6 +117,7 @@ void Stage::Draw()
 						32 * y + 32,
 						0x000000,
 						FALSE);
+				break;
 			case Maze::MazeState::FOUND:
 				DrawBox(32 * x,
 						32 * y,
@@ -121,6 +131,11 @@ void Stage::Draw()
 						32 * y + 32,
 						0x000000,
 						FALSE);
+
+				DrawFormatString(32 * x,
+								 32 * y,
+								 0x000000,
+								 "%d", mazeData_[i].stepCount);
 				break;
 			default:
 				break;
@@ -130,14 +145,20 @@ void Stage::Draw()
 
 void Stage::SetMazeState(Point _pos, Maze::MazeState _state)
 {
-	int index = MAZE_WIDTH * _pos.y + _pos.x;
-	mazeData_[index] = _state;
+	int index = PointToIndex(_pos);
+	mazeData_[index].mzState = _state;
+}
+
+void Stage::SetStepCount(Point _pos, int _stepCount)
+{
+	int index = PointToIndex(_pos);
+	mazeData_[index].stepCount = _stepCount;
 }
 
 Maze::MazeState Stage::GetMazeState(Point _pos)
 {
 	int index = MAZE_WIDTH * _pos.y + _pos.x;
-	return mazeData_[index];
+	return mazeData_[index].mzState;
 }
 
 Point Stage::IndexToPoint(int _index)
