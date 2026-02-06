@@ -347,52 +347,50 @@ void Explorer::FindPathBFS()
 	// いける方にいく
 	// 
 
-	Point currPos{pStage_->IndexToPoint(pMaze_->GetStart())};
-	std::queue<Point> BFSQueue;
+	Point currPos{0, 0};
 
-	BFSQueue.push(currPos);
-	pStage_->SetMazeState(currPos, Maze::MazeState::FOUND); // スタート地点を探索済みにする
+	// Start地点(1, 1)をQueueに入れる
+	std::queue<Point> BFSQueue;
+	BFSQueue.push(pStage_->IndexToPoint(pMaze_->GetStart()));
+
+	// Queueの先頭をcurrPosに設定
+	//currPos = BFSQueue.front();
+	//BFSQueue.pop();
+	pStage_->SetMazeState(BFSQueue.front(), Maze::MazeState::FOUND); // スタート地点を探索済みにする
+	pStage_->SetStepCount(BFSQueue.front(), 0);
 
 	while (true)
 	{
-		static int stepCount = 0;
+		static int stepCount = 1;
+		int overStep = 0;
+
+		if (BFSQueue.size() == 0)
+		{
+			break;
+		}
+		if (currPos == pStage_->IndexToPoint(pMaze_->GetGoal()))
+		{
+			break;
+		}
 		
-		int wayCount{0};
-		// ここで次の一歩で行ける道を探している
-		for (int i = 0; i < DIR::MAX_DIR; i++)
+		currPos = BFSQueue.front();
+		BFSQueue.pop();
+		pStage_->SetMazeState(currPos, Maze::MazeState::FOUND);
+
+		//pStage_->SetStepCount(currPos, stepCount);
+		
+		for (int i = 0; i < MAX_DIR; i++)
 		{
-			// 現在の位置に、ある方向に向けて一歩先の座標を求める。
-			Point tmp = currPos + NEXT_POSITION[i];
-
-
-			if (pStage_->GetMazeState(tmp) == Maze::MazeState::WAY)
+			Point nextPos = currPos + NEXT_POSITION[i];
+			Maze::MazeState state = pStage_->GetMazeState(nextPos);
+			if (state == Maze::MazeState::WAY)
 			{
-				// 行ける場所をenq
-				BFSQueue.push(tmp);
-
-				// 行ける場所を探索済みにする
-				pStage_->SetMazeState(tmp, Maze::MazeState::FOUND);
-				pStage_->SetStepCount(tmp, stepCount);
-				wayCount++;
+				// いける地点をEnqueue
+				BFSQueue.push(nextPos);
+				pStage_->SetStepCount(nextPos, stepCount); // ループ中のstep数は同じにしたい
 			}
 		}
-
-		// 4方向がふさがっていたら、次のループに進む
-		if (wayCount == 0)
-		{
-			if (BFSQueue.size() > 0)
-			{
-				stepCount++;
-				currPos = BFSQueue.front();
-				BFSQueue.pop();
-			}
-			else
-			{
-				// キューのサイズが0なら終了 <- 嫌過ぎるけど、ゴールしたと見做すしかない
-				break;
-			}
-			continue;
-		}
+		stepCount++;
 	}
 }
 

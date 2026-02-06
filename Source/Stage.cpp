@@ -47,11 +47,13 @@ void Stage::Update()
 
 void Stage::Draw()
 {
+
 	for (int i = 0; i < mazeData_.size(); i++)
 	{
 		int x = i % MAZE_WIDTH;
 		int y = i / MAZE_WIDTH;
 		
+
 		switch (mazeData_[i].mzState)
 		{
 			case Maze::MazeState::WALL:
@@ -139,6 +141,17 @@ void Stage::Draw()
 				break;
 			default:
 				break;
+		}
+	}
+	for (int x = 0; x < MAZE_WIDTH; x++)
+	{
+		for (int y = 0; y < MAZE_HEIGHT; y++)
+		{
+			// 横線
+			DrawLine(0, y * 32, MAZE_WIDTH * 32, y * 32, 0);
+
+			// 縦線
+			DrawLine(x * 32, 0, x * 32, MAZE_HEIGHT * 32, 0);
 		}
 	}
 }

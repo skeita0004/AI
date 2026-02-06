@@ -46,6 +46,12 @@ public:
 
 private:
 
+	struct BFSData
+	{
+		Point pos;
+		int   stepCount;
+	};
+
 	int hImage_;
 	Point position_;
 
