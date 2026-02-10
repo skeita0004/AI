@@ -347,17 +347,17 @@ void Explorer::FindPathBFS()
 	// いける方にいく
 	// 
 
-	Point currPos{0, 0};
+	NodeData currNodeData({0, 0}, 0);
 
 	// Start地点(1, 1)をQueueに入れる
-	std::queue<Point> BFSQueue;
-	BFSQueue.push(pStage_->IndexToPoint(pMaze_->GetStart()));
+	std::queue<NodeData> BFSQueue;
+	BFSQueue.push(NodeData(pStage_->IndexToPoint(pMaze_->GetStart()), 0));
 
 	// Queueの先頭をcurrPosに設定
 	//currPos = BFSQueue.front();
 	//BFSQueue.pop();
-	pStage_->SetMazeState(BFSQueue.front(), Maze::MazeState::FOUND); // スタート地点を探索済みにする
-	pStage_->SetStepCount(BFSQueue.front(), 0);
+	pStage_->SetMazeState(BFSQueue.front().pos, Maze::MazeState::FOUND); // スタート地点を探索済みにする
+	pStage_->SetStepCount(BFSQueue.front().pos, BFSQueue.front().stepCount);
 
 	while (true)
 	{
@@ -368,29 +368,38 @@ void Explorer::FindPathBFS()
 		{
 			break;
 		}
-		if (currPos == pStage_->IndexToPoint(pMaze_->GetGoal()))
-		{
-			break;
-		}
 		
-		currPos = BFSQueue.front();
+		currNodeData = BFSQueue.front();
 		BFSQueue.pop();
-		pStage_->SetMazeState(currPos, Maze::MazeState::FOUND);
+
+		int currStepCount = pStage_->GetStepCount(currNodeData.pos);
 
 		//pStage_->SetStepCount(currPos, stepCount);
 		
 		for (int i = 0; i < MAX_DIR; i++)
 		{
-			Point nextPos = currPos + NEXT_POSITION[i];
-			Maze::MazeState state = pStage_->GetMazeState(nextPos);
+			NodeData nextNodeData{ currNodeData.pos + NEXT_POSITION[i], currStepCount + 1 };
+			Maze::MazeState state = pStage_->GetMazeState(nextNodeData.pos);
+			if (nextNodeData.pos == pStage_->IndexToPoint(pMaze_->GetGoal()))
+			{
+				currNodeData = nextNodeData;
+				pStage_->SetStepCount(currNodeData.pos, currNodeData.stepCount);
+				pStage_->SetMazeState(currNodeData.pos, Maze::MazeState::FOUND);
+				break;
+			}
 			if (state == Maze::MazeState::WAY)
 			{
 				// いける地点をEnqueue
-				BFSQueue.push(nextPos);
-				pStage_->SetStepCount(nextPos, stepCount); // ループ中のstep数は同じにしたい
+				BFSQueue.push(NodeData(nextNodeData));
+				pStage_->SetStepCount(nextNodeData.pos, nextNodeData.stepCount); // ループ中のstep数は同じにしたい
+				pStage_->SetMazeState(nextNodeData.pos, Maze::MazeState::FOUND);
 			}
 		}
-		stepCount++;
+
+		if (currNodeData.pos == pStage_->IndexToPoint(pMaze_->GetGoal()))
+		{
+			break;
+		}
 	}
 }
 

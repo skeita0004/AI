@@ -18,6 +18,7 @@ public:
 
 	void SetMazeState(Point _pos, Maze::MazeState _state);
 	void SetStepCount(Point _pos, int _stepCount);
+	int  GetStepCount(Point _pos);
 
 	Maze::MazeState GetMazeState(Point _pos);
 

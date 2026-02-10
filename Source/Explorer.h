@@ -46,8 +46,12 @@ public:
 
 private:
 
-	struct BFSData
+	struct NodeData
 	{
+		NodeData(Point _pos, int _stepCount) :
+			pos(_pos),
+			stepCount(_stepCount)
+		{}
 		Point pos;
 		int   stepCount;
 	};

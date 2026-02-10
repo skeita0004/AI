@@ -168,6 +168,12 @@ void Stage::SetStepCount(Point _pos, int _stepCount)
 	mazeData_[index].stepCount = _stepCount;
 }
 
+int Stage::GetStepCount(Point _pos)
+{
+	int index = PointToIndex(_pos);
+	return mazeData_[index].stepCount;
+}
+
 Maze::MazeState Stage::GetMazeState(Point _pos)
 {
 	int index = MAZE_WIDTH * _pos.y + _pos.x;
