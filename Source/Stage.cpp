@@ -18,14 +18,16 @@ Stage::Stage() :
 					 MAZE_HEIGHT);
 	//mazeData_ = pMaze_->Generate();
 	std::vector<Maze::MazeState> tmp;
-	tmp = pMaze_->Load();
+	//tmp = pMaze_->Load();
+	tmp = pMaze_->Generate();
 
 	mazeData_.resize(tmp.size());
 
+	int i = 0;
 	for (auto item : tmp)
 	{
-		static int i = 0;
 		mazeData_[i].mzState = item;
+		mazeData_[i].stepCount = INT32_MAX;
 		i++;
 	}
 
@@ -139,6 +141,25 @@ void Stage::Draw()
 								 0x000000,
 								 "%d", mazeData_[i].stepCount);
 				break;
+
+			case Maze::MazeState::ETCHING:
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0x00FFFF,
+						TRUE);
+				DrawBox(32 * x,
+						32 * y,
+						32 * x + 32,
+						32 * y + 32,
+						0x000000,
+						FALSE);
+
+				DrawFormatString(32 * x,
+								 32 * y,
+								 0x000000,
+								 "%d", mazeData_[i].stepCount);
 			default:
 				break;
 		}

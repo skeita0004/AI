@@ -25,6 +25,11 @@ public:
 	Point IndexToPoint(int _index);
 	int   PointToIndex(Point _pos);
 
+	int GetMazeSize()
+	{
+		return mazeData_.size();
+	}
+
 	Maze* GetMazeP()
 	{
 		return pMaze_;

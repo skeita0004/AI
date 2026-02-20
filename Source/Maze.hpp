@@ -17,6 +17,7 @@ public:
 		START,
 		GOAL,
 		FOUND,
+		ETCHING,
 		MAX_STATE
 	};
 

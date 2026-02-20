@@ -27,6 +27,9 @@ public:
 	void FindPathDijkstra();
 	void FindPathAStar();
 
+	/// @brief BFSで探索した経路から、ゴールまでの道を可視化する
+	void EtchingBFSPath(int _stepCount);
+
 	void SetPosition(Point _position)
 	{
 		position_ = _position;
@@ -73,6 +76,5 @@ private:
 	int* anim;
 
 	bool isWall_;
-
-
+	bool enabledSearch_;
 };

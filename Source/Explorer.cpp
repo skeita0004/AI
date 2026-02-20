@@ -30,7 +30,8 @@ Explorer::Explorer(Point _position) :
 	dirTimer_(DIR_CHANGE_TIME),
 	moveTimer_(MOVE_TIME),
 	anim(nullptr),
-	isWall_(false)
+	isWall_(false),
+	enabledSearch_(true)
 {
 	pStage_ = FindGameObject<Stage>();
 	pMaze_  = pStage_->GetMazeP();
@@ -47,31 +48,11 @@ Explorer::~Explorer()
 
 void Explorer::Update()
 {
-	// １．
-	// 全経路を探索し、ゴールまでの最短経路を求める
-	// 求まった経路は、キューに入れられ、
-	// 探検者は一定間隔(何秒とか、何フレームとか)で次の場所へ進む
-	// 
-	// ２．
-	// 別の方法としては、経路探索後に、ゴールへと至らない経路をすべて
-	// 壁として設定し、壁にぶつかったら壁ではない方向へ向き、
-	// そして、現在向いている方向とは逆の方向を向かないようにすれば、
-	// 角で曲がるので、進むべき方向は一つに絞れる。
-	// 
-	// 今回は、２の方法で行くことにする。
-	// 
-	// 探検者は、迷路の不要な経路を壁に書き換える権限を持つ。
-	// 
-
 	// FindPath() <- 1フレームに１マスごとやってほしいのよね。(西麻布のママより)
-	if (Input::IsKeyDown(KEY_INPUT_RETURN))
+	if (Input::IsKeyHold(KEY_INPUT_RETURN) and enabledSearch_)
 	{
 		FindPathBFS();
 	}
-
-	//dirTimer_ += DeltaTime::GetDeltaTime();
-
-	//Move(MOVE_TIME);
 }
 
 void Explorer::Draw()
@@ -343,38 +324,45 @@ void Explorer::FindPathDFS()
 
 void Explorer::FindPathBFS()
 {
-	// 上下左右みる
-	// いける方にいく
-	// 
-
-	NodeData currNodeData({0, 0}, 0);
+	static NodeData currNodeData({0, 0}, 0);
 
 	// Start地点(1, 1)をQueueに入れる
-	std::queue<NodeData> BFSQueue;
-	BFSQueue.push(NodeData(pStage_->IndexToPoint(pMaze_->GetStart()), 0));
+	static std::queue<NodeData> BFSQueue;
 
-	// Queueの先頭をcurrPosに設定
-	//currPos = BFSQueue.front();
-	//BFSQueue.pop();
-	pStage_->SetMazeState(BFSQueue.front().pos, Maze::MazeState::FOUND); // スタート地点を探索済みにする
-	pStage_->SetStepCount(BFSQueue.front().pos, BFSQueue.front().stepCount);
+	static bool first = true;
 
-	while (true)
+	if (first)
 	{
-		static int stepCount = 1;
+		BFSQueue.push(NodeData(pStage_->IndexToPoint(pMaze_->GetStart()), 0));
+
+		// Queueの先頭をcurrPosに設定
+		//currPos = BFSQueue.front();
+		//BFSQueue.pop();
+		pStage_->SetMazeState(BFSQueue.front().pos, Maze::MazeState::FOUND); // スタート地点を探索済みにする
+		pStage_->SetStepCount(BFSQueue.front().pos, BFSQueue.front().stepCount);
+		first = false;
+	}
+
+	//while (true)
+	{
+		//static int stepCount = 1;
 		int overStep = 0;
 
-		if (BFSQueue.size() == 0)
-		{
-			break;
-		}
+		//if (BFSQueue.size() == 0)
+		//{
+		//	enabledSearch_ = false;
+		//	EtchingBFSPath(currNodeData.stepCount);
+		//	currNodeData = NodeData(Point(0, 0), 0);
+		//	first = true;
+		//	BFSQueue = std::queue<NodeData>();
+		//	return;
+		//	//break;
+		//}
 		
 		currNodeData = BFSQueue.front();
 		BFSQueue.pop();
 
 		int currStepCount = pStage_->GetStepCount(currNodeData.pos);
-
-		//pStage_->SetStepCount(currPos, stepCount);
 		
 		for (int i = 0; i < MAX_DIR; i++)
 		{
@@ -398,7 +386,13 @@ void Explorer::FindPathBFS()
 
 		if (currNodeData.pos == pStage_->IndexToPoint(pMaze_->GetGoal()))
 		{
-			break;
+			// ここでフラグを下げる
+			enabledSearch_ = false;
+			EtchingBFSPath(currNodeData.stepCount);
+			currNodeData = NodeData(Point(0, 0), 0);
+			first = true;
+			BFSQueue = std::queue<NodeData>();
+			return;
 		}
 	}
 }
@@ -409,4 +403,38 @@ void Explorer::FindPathDijkstra()
 
 void Explorer::FindPathAStar()
 {
+}
+
+void Explorer::EtchingBFSPath(int _stepCount)
+{
+	Point currPos{pStage_->IndexToPoint(pMaze_->GetGoal())};
+	pStage_->SetMazeState(currPos, Maze::MazeState::ETCHING);
+
+	while (true)
+	{
+		for (int i = 0; i < DIR::MAX_DIR; i++)
+		{
+			Point nextPos{currPos + NEXT_POSITION[i]};
+			if (pStage_->GetStepCount(nextPos) < _stepCount)
+			{
+				_stepCount--;
+				currPos = nextPos;
+				pStage_->SetMazeState(currPos, Maze::MazeState::ETCHING);
+				break;
+			}
+		}
+
+		if (_stepCount == 0)
+		{
+			break;
+		}
+	}
+
+	for (int i = 0; i < pStage_->GetMazeSize(); i++)
+	{
+		if (pStage_->GetMazeState(pStage_->IndexToPoint(i)) == Maze::MazeState::FOUND)
+		{
+			pStage_->SetMazeState(pStage_->IndexToPoint(i), Maze::MazeState::WAY);
+		}
+	}
 }
