@@ -91,7 +91,4 @@ const Point NEXT_POSITION[] =
 	{1, 0}
 };
 
-
 const int CHARA_SIZE = 32;
-const int STAGE_WIDTH = 39;
-const int STAGE_HEIGHT = 21;

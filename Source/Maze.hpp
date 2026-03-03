@@ -26,13 +26,23 @@ public:
 	~Maze();
 	
 	/// @brief 穴掘り法により、迷路を生成する。
-	std::vector<MazeState> Generate();
+	std::vector<MazeState> Generate(static int width, int height);
 	
 	void Save();
 	std::vector<MazeState>& Load();
 
 	int GetStart();
 	int GetGoal();
+
+	int GetWidth()
+	{
+		return width_;
+	}
+
+	int GetHeight()
+	{
+		return height_;
+	}
 
 private:
 

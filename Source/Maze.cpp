@@ -204,6 +204,7 @@ std::vector<Maze::MazeState>& Maze::Load()
 	}
 	width_  = std::stoi(line.substr(0, cammaPos));
 	height_ = std::stoi(line.substr(cammaPos + 1));
+	length_ = width_ * height_;
 
 	// 迷路データ読み込み
 	maze_.clear();

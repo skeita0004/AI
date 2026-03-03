@@ -5,8 +5,8 @@
 
 namespace
 {
-	const int MAZE_WIDTH{39};
-	const int MAZE_HEIGHT{21};
+	const int MAZE_WIDTH{20};
+	const int MAZE_HEIGHT{20};
 }
 
 Stage::Stage() :
@@ -16,10 +16,10 @@ Stage::Stage() :
 {
 	pMaze_ = new Maze(MAZE_WIDTH,
 					 MAZE_HEIGHT);
-	//mazeData_ = pMaze_->Generate();
+
 	std::vector<Maze::MazeState> tmp;
-	//tmp = pMaze_->Load();
-	tmp = pMaze_->Generate();
+	tmp = pMaze_->Load();
+	//tmp = pMaze_->Generate();
 
 	mazeData_.resize(tmp.size());
 
@@ -203,7 +203,7 @@ Maze::MazeState Stage::GetMazeState(Point _pos)
 
 Point Stage::IndexToPoint(int _index)
 {
-	return Point(_index % STAGE_WIDTH, _index / STAGE_WIDTH);
+	return Point(_index % MAZE_WIDTH, _index / MAZE_WIDTH);
 }
 
 int Stage::PointToIndex(Point _pos)

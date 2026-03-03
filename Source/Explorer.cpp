@@ -343,30 +343,75 @@ void Explorer::FindPathBFS()
 		first = false;
 	}
 
-	//while (true)
+	currNodeData = BFSQueue.front();
+	BFSQueue.pop();
+
+	int currStepCount = pStage_->GetStepCount(currNodeData.pos);
+		
+	for (int i = 0; i < MAX_DIR; i++)
 	{
-		//static int stepCount = 1;
+		NodeData nextNodeData{ currNodeData.pos + NEXT_POSITION[i], currStepCount + 1 };
+		Maze::MazeState state = pStage_->GetMazeState(nextNodeData.pos);
+		if (nextNodeData.pos == pStage_->IndexToPoint(pMaze_->GetGoal()))
+		{
+			currNodeData = nextNodeData;
+			pStage_->SetStepCount(currNodeData.pos, currNodeData.stepCount);
+			pStage_->SetMazeState(currNodeData.pos, Maze::MazeState::FOUND);
+			break;
+		}
+		if (state == Maze::MazeState::WAY)
+		{
+			// いける地点をEnqueue
+			BFSQueue.push(NodeData(nextNodeData));
+			pStage_->SetStepCount(nextNodeData.pos, nextNodeData.stepCount); // ループ中のstep数は同じにしたい
+			pStage_->SetMazeState(nextNodeData.pos, Maze::MazeState::FOUND);
+		}
+	}
+
+	if (currNodeData.pos == pStage_->IndexToPoint(pMaze_->GetGoal()))
+	{
+		// ここでフラグを下げる
+		enabledSearch_ = false;
+		EtchingBFSPath(currNodeData.stepCount);
+		currNodeData = NodeData(Point(0, 0), 0);
+		first = true;
+		BFSQueue = std::queue<NodeData>();
+		return;
+	}
+}
+
+void Explorer::FindPathDijkstra()
+{
+	static NodeData currNodeData({0, 0}, 0);
+
+	// Start地点(1, 1)をQueueに入れる
+	static std::queue<NodeData> BFSQueue;
+
+	static bool first = true;
+
+	if (first)
+	{
+		BFSQueue.push(NodeData(pStage_->IndexToPoint(pMaze_->GetStart()), 0));
+
+		// Queueの先頭をcurrPosに設定
+		//currPos = BFSQueue.front();
+		//BFSQueue.pop();
+		pStage_->SetMazeState(BFSQueue.front().pos, Maze::MazeState::FOUND); // スタート地点を探索済みにする
+		pStage_->SetStepCount(BFSQueue.front().pos, BFSQueue.front().stepCount);
+		first = false;
+	}
+
+	{
 		int overStep = 0;
 
-		//if (BFSQueue.size() == 0)
-		//{
-		//	enabledSearch_ = false;
-		//	EtchingBFSPath(currNodeData.stepCount);
-		//	currNodeData = NodeData(Point(0, 0), 0);
-		//	first = true;
-		//	BFSQueue = std::queue<NodeData>();
-		//	return;
-		//	//break;
-		//}
-		
 		currNodeData = BFSQueue.front();
 		BFSQueue.pop();
 
 		int currStepCount = pStage_->GetStepCount(currNodeData.pos);
-		
+
 		for (int i = 0; i < MAX_DIR; i++)
 		{
-			NodeData nextNodeData{ currNodeData.pos + NEXT_POSITION[i], currStepCount + 1 };
+			NodeData nextNodeData{currNodeData.pos + NEXT_POSITION[i], currStepCount + 1};
 			Maze::MazeState state = pStage_->GetMazeState(nextNodeData.pos);
 			if (nextNodeData.pos == pStage_->IndexToPoint(pMaze_->GetGoal()))
 			{
@@ -397,10 +442,6 @@ void Explorer::FindPathBFS()
 	}
 }
 
-void Explorer::FindPathDijkstra()
-{
-}
-
 void Explorer::FindPathAStar()
 {
 }
@@ -415,7 +456,7 @@ void Explorer::EtchingBFSPath(int _stepCount)
 		for (int i = 0; i < DIR::MAX_DIR; i++)
 		{
 			Point nextPos{currPos + NEXT_POSITION[i]};
-			if (pStage_->GetStepCount(nextPos) < _stepCount)
+			if (pStage_->GetStepCount(nextPos) == _stepCount - 1)
 			{
 				_stepCount--;
 				currPos = nextPos;
