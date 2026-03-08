@@ -16,12 +16,6 @@ public:
 	void Update() override;
 	void Draw() override;
 
-	void TurnLeft();
-	void TurnRight();
-	void TurnBack();
-
-	void Move(float _moveInterval);
-
 	void FindPathDFS();
 	void FindPathBFS();
 	void FindPathDijkstra();
