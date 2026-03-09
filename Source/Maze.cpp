@@ -30,6 +30,18 @@ std::vector<Maze::MazeState> Maze::Generate(int width, int height)
 	width_ = width;
 	height_ = height;
 
+	length_ = width_ * height_;
+
+	maze_.resize(length_);
+
+	for (auto& tile : maze_)
+	{
+		tile = MazeState::WALL;
+
+
+
+	}
+
 	std::stack<int> intersection{};
 	std::mt19937 engine(std::random_device{}());
 

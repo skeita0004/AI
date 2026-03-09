@@ -3,23 +3,18 @@
 #include "../ImGui/imgui.h"
 #include "Explorer.h"
 
-namespace
-{
-	const int MAZE_WIDTH{20};
-	const int MAZE_HEIGHT{20};
-}
-
 Stage::Stage() :
 	pExplorer_(),
 	pMaze_(),
 	mazeData_()
 {
-	pMaze_ = new Maze(MAZE_WIDTH,
-					 MAZE_HEIGHT);
+	pMaze_ = new Maze(0, 0);
+
 
 	std::vector<Maze::MazeState> tmp;
-	tmp = pMaze_->Load();
-	//tmp = pMaze_->Generate();
+	//tmp = pMaze_->Load();
+	tmp = pMaze_->Generate(21, 21);
+	int mazeWidth = pMaze_->GetWidth();
 
 	mazeData_.resize(tmp.size());
 
@@ -32,8 +27,8 @@ Stage::Stage() :
 	}
 
 	int x, y;
-	x = pMaze_->GetStart() % MAZE_WIDTH;
-	y = pMaze_->GetStart() / MAZE_WIDTH;
+	x = pMaze_->GetStart() % mazeWidth;
+	y = pMaze_->GetStart() / mazeWidth;
 
 	pExplorer_ = new Explorer({x, y});
 	SetDrawOrder(INT_MAX - 1);
@@ -49,11 +44,13 @@ void Stage::Update()
 
 void Stage::Draw()
 {
+	int mazeWidth = pMaze_->GetWidth();
+	int mazeHeight = pMaze_->GetHeight();
 
 	for (int i = 0; i < mazeData_.size(); i++)
 	{
-		int x = i % MAZE_WIDTH;
-		int y = i / MAZE_WIDTH;
+		int x = i % mazeWidth;
+		int y = i / mazeWidth;
 		
 
 		switch (mazeData_[i].mzState)
@@ -160,19 +157,20 @@ void Stage::Draw()
 								 32 * y,
 								 0x000000,
 								 "%d", mazeData_[i].stepCount);
+				break;
 			default:
 				break;
 		}
 	}
-	for (int x = 0; x < MAZE_WIDTH; x++)
+	for (int x = 0; x < mazeWidth; x++)
 	{
-		for (int y = 0; y < MAZE_HEIGHT; y++)
+		for (int y = 0; y < mazeHeight; y++)
 		{
 			// 横線
-			DrawLine(0, y * 32, MAZE_WIDTH * 32, y * 32, 0);
+			DrawLine(0, y * 32, mazeWidth * 32, y * 32, 0);
 
 			// 縦線
-			DrawLine(x * 32, 0, x * 32, MAZE_HEIGHT * 32, 0);
+			DrawLine(x * 32, 0, x * 32, mazeHeight * 32, 0);
 		}
 	}
 }
@@ -197,16 +195,16 @@ int Stage::GetStepCount(Point _pos)
 
 Maze::MazeState Stage::GetMazeState(Point _pos)
 {
-	int index = MAZE_WIDTH * _pos.y + _pos.x;
+	int index = pMaze_->GetWidth() * _pos.y + _pos.x;
 	return mazeData_[index].mzState;
 }
 
 Point Stage::IndexToPoint(int _index)
 {
-	return Point(_index % MAZE_WIDTH, _index / MAZE_WIDTH);
+	return Point(_index % pMaze_->GetWidth(), _index / pMaze_->GetWidth());
 }
 
 int Stage::PointToIndex(Point _pos)
 {
-	return MAZE_WIDTH * _pos.y + _pos.x;
+	return pMaze_->GetWidth() * _pos.y + _pos.x;
 }

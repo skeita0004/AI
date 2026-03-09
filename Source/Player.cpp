@@ -34,39 +34,6 @@ Player::~Player()
 
 void Player::Update()
 {
-
-	if (Input::IsKeyDown(KEY_INPUT_W))
-	{
-		if (position_.y - 1 > 0)
-		{
-			currDir_ = UP;
-			position_.y -= 1;
-		}
-	}
-	if (Input::IsKeyDown(KEY_INPUT_S))
-	{
-		if (position_.y + 1 < STAGE_HEIGHT - 1)
-		{
-			currDir_ = DOWN;
-			position_.y += 1;
-		}
-	}
-	if (Input::IsKeyDown(KEY_INPUT_A))
-	{
-		if (position_.x - 1 > 0)
-		{
-			currDir_ = LEFT;
-			position_.x -= 1;
-		}
-	}
-	if (Input::IsKeyDown(KEY_INPUT_D))
-	{
-		currDir_ = RIGHT;
-		if (position_.x + 1 < STAGE_WIDTH - 1)
-		{
-			position_.x += 1;
-		}
-	}
 }
 
 void Player::Draw()

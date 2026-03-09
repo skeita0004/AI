@@ -9,7 +9,7 @@
 class Maze
 {
 public:
-	enum class MazeState : int
+	enum class MazeState
 	{
 		WALL,
 		OUTER_WALL,
@@ -19,6 +19,12 @@ public:
 		FOUND,
 		ETCHING,
 		MAX_STATE
+	};
+
+	struct MazeTile
+	{
+		MazeState state;
+		int       cost;
 	};
 
 public:
