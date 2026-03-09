@@ -25,8 +25,11 @@ Maze::~Maze()
 {
 }
 
-std::vector<Maze::MazeState> Maze::Generate()
+std::vector<Maze::MazeState> Maze::Generate(int width, int height)
 {
+	width_ = width;
+	height_ = height;
+
 	std::stack<int> intersection{};
 	std::mt19937 engine(std::random_device{}());
 
@@ -118,6 +121,7 @@ std::vector<Maze::MazeState> Maze::Generate()
 		intersection.push(currPos);
 	}
 
+	// 左上にスタート、右下にゴール(壁の内側)
 	maze_[1 + width_] = MazeState::START;
 	maze_[((length_ - 1) - 1) - width_] = MazeState::GOAL;
 
