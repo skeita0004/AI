@@ -246,7 +246,7 @@ void Explorer::FindPathBFS()
 
 void Explorer::FindPathDijkstra()
 {
-	static DijkstraND currNodeData({0, 0}, 0, 0);
+	static DijkstraND currNodeData({0, 0}, 0);
 
 	// Start地点(1, 1)をQueueに入れる
 	static std::priority_queue<DijkstraND> BFSQueue;
@@ -257,48 +257,68 @@ void Explorer::FindPathDijkstra()
 	{
 		BFSQueue.push(DijkstraND(pStage_->IndexToPoint(pMaze_->GetStart()), 0));
 
+		minCosts_.assign( pStage_->GetMazeSize(), INT_MAX);
+		minCosts_[pMaze_->GetStart()] = 0;
+
+		preNodes_.resize( pStage_->GetMazeSize() );
+
 		pStage_->SetMazeState(BFSQueue.top().pos, Maze::MazeState::FOUND); // スタート地点を探索済みにする
-		pStage_->SetStepCount(BFSQueue.top().pos, BFSQueue.top().stepCount);
+		pStage_->SetStepCount(BFSQueue.top().pos, 0);
+
+		
 		first = false;
 	}
 
+	if (BFSQueue.empty())
 	{
-		int overStep = 0;
+		return;
+	}
+	
+	currNodeData = BFSQueue.top();
+	BFSQueue.pop();
 
-		currNodeData = BFSQueue.top();
-		BFSQueue.pop();
 
-		int currStepCount = pStage_->GetStepCount(currNodeData.pos);
+	int currIndex = pStage_->PointToIndex( currNodeData.pos );
 
-		for (int i = 0; i < MAX_DIR; i++)
+	if (currNodeData.cost > minCosts_[currIndex])
+	{
+		return;
+	}
+
+	if (currNodeData.pos == pStage_->IndexToPoint(pMaze_->GetGoal()))
+	{
+		// ここでフラグを下げる
+		enabledSearch_ = false;
+		EtchingDijkstra();
+		currNodeData = DijkstraND(Point(0, 0), 0);
+		first = true;
+		BFSQueue = std::priority_queue<DijkstraND>();
+		return;
+	}
+
+
+	for (int i = 0; i < MAX_DIR; i++)
+	{
+		DijkstraND nextNodeData{currNodeData.pos + NEXT_POSITION[i],
+								pStage_->GetMazePathCost(currNodeData.pos + NEXT_POSITION[i])};
+		Maze::MazeState state = pStage_->GetMazeState(nextNodeData.pos);
+
+		int tileWeight = pStage_->GetMazePathCost( nextNodeData.pos );
+		int totalCost = currNodeData.cost + tileWeight;
+
+		if (state == Maze::MazeState::WAY or state == Maze::MazeState::GOAL)
 		{
-			DijkstraND nextNodeData{currNodeData.pos + NEXT_POSITION[i], currStepCount + 1, pStage_->GetMazePathCost(currNodeData.pos + NEXT_POSITION[i])};
-			Maze::MazeState state = pStage_->GetMazeState(nextNodeData.pos);
-			if (nextNodeData.pos == pStage_->IndexToPoint(pMaze_->GetGoal()))
+
+			if (totalCost < minCosts_[pStage_->PointToIndex( nextNodeData.pos )])
 			{
-				currNodeData = nextNodeData;
-				pStage_->SetStepCount(currNodeData.pos, currNodeData.stepCount);
-				pStage_->SetMazeState(currNodeData.pos, Maze::MazeState::FOUND);
-				break;
-			}
-			if (state == Maze::MazeState::WAY)
-			{
+				pStage_->SetStepCount( nextNodeData.pos, totalCost );
+				minCosts_[pStage_->PointToIndex( nextNodeData.pos )] = totalCost;
+
+				preNodes_[pStage_->PointToIndex(nextNodeData.pos)] = currNodeData.pos;
 				// いける地点をEnqueue
-				BFSQueue.push(DijkstraND(nextNodeData));
-				pStage_->SetStepCount(nextNodeData.pos, nextNodeData.stepCount); // ループ中のstep数は同じにしたい
+				BFSQueue.push(DijkstraND(nextNodeData.pos, totalCost));
 				pStage_->SetMazeState(nextNodeData.pos, Maze::MazeState::FOUND);
 			}
-		}
-
-		if (currNodeData.pos == pStage_->IndexToPoint(pMaze_->GetGoal()))
-		{
-			// ここでフラグを下げる
-			enabledSearch_ = false;
-			EtchingDijkstra(currNodeData.stepCount, 0);
-			currNodeData = DijkstraND(Point(0, 0), 0, 0);
-			first = true;
-			BFSQueue = std::priority_queue<DijkstraND>();
-			return;
 		}
 	}
 }
@@ -341,36 +361,26 @@ void Explorer::EtchingBFSPath(int _stepCount)
 	}
 }
 
-void Explorer::EtchingDijkstra(int _stepCount, int _cost)
+void Explorer::EtchingDijkstra()
 {
 	Point currPos{pStage_->IndexToPoint(pMaze_->GetGoal())};
-	pStage_->SetMazeState(currPos, Maze::MazeState::ETCHING);
+	Point startPos{ pStage_->IndexToPoint( pMaze_->GetStart() ) };
+
+	//pStage_->SetMazeState(currPos, Maze::MazeState::ETCHING);
 
 	while (true)
 	{
-		for (int i = 0; i < DIR::MAX_DIR; i++)
-		{
-			Point nextPos{currPos + NEXT_POSITION[i]};
-			if (pStage_->GetStepCount(nextPos) + pStage_->GetMazePathCost(nextPos) < _stepCount + pStage_->GetStepCount(currPos))
-			{
-				_stepCount--;
-				currPos = nextPos;
-				pStage_->SetMazeState(currPos, Maze::MazeState::ETCHING);
-				break;
-			}
-		}
+		pStage_->SetMazeState( currPos, Maze::MazeState::ETCHING );
+		//pStage_->SetStepCount( currPos, 0 );
 
-		if (_stepCount == 0)
+		int index = pStage_->PointToIndex( currPos );
+		currPos = preNodes_[index];
+
+		if (currPos == startPos)
 		{
 			break;
 		}
 	}
 
-	for (int i = 0; i < pStage_->GetMazeSize(); i++)
-	{
-		if (pStage_->GetMazeState(pStage_->IndexToPoint(i)) == Maze::MazeState::FOUND)
-		{
-			pStage_->SetMazeState(pStage_->IndexToPoint(i), Maze::MazeState::WAY);
-		}
-	}
+	pStage_->SetMazeState( startPos, Maze::MazeState::ETCHING );
 }

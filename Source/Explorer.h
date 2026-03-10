@@ -24,7 +24,7 @@ public:
 	/// @brief BFSで探索した経路から、ゴールまでの道を可視化する
 	void EtchingBFSPath(int _stepCount);
 
-	void EtchingDijkstra(int _stepCount, int _cost);
+	void EtchingDijkstra();
 
 	void SetPosition(Point _position)
 	{
@@ -89,4 +89,7 @@ private:
 
 	bool isWall_;
 	bool enabledSearch_;
+
+	std::vector<int> minCosts_;
+	std::vector<Point> preNodes_;
 };

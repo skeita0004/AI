@@ -143,7 +143,7 @@ void Stage::Draw()
 								 "%d", mazeData_[i].stepCount);
 				DrawFormatString(32 * x + 24,
 								 32 * y + 16,
-								 0xff0000,
+								 0x0000ff,
 								 "%d", mazeData_[i].mzTile.cost);
 				break;
 
