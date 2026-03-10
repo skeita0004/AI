@@ -11,7 +11,7 @@ Maze::Maze(int _width, int _height) :
 	height_(_height),
 	length_(width_ * height_)
 {
-	maze_ = std::vector<MazeState>(length_, MazeState::WALL);
+	maze_ = std::vector<MazeTile>(length_, {MazeState::WALL, 0});
 
 	// 相互mapの初期化
 	mazeLUT_.insert({'W', MazeState::WALL});
@@ -25,7 +25,7 @@ Maze::~Maze()
 {
 }
 
-std::vector<Maze::MazeState> Maze::Generate(int width, int height)
+std::vector<Maze::MazeTile> Maze::Generate(int width, int height)
 {
 	width_ = width;
 	height_ = height;
@@ -36,10 +36,7 @@ std::vector<Maze::MazeState> Maze::Generate(int width, int height)
 
 	for (auto& tile : maze_)
 	{
-		tile = MazeState::WALL;
-
-
-
+		tile = {MazeState::WALL, 0};
 	}
 
 	std::stack<int> intersection{};
@@ -78,8 +75,8 @@ std::vector<Maze::MazeState> Maze::Generate(int width, int height)
 
 			bool canDug{
 				0 < nextPos and nextPos < length_           // 配列の範囲内
-				and maze_[nextPos] not_eq MazeState::WAY        // 道じゃない
-				and maze_[nextPos] not_eq MazeState::OUTER_WALL // 外壁じゃない
+				and maze_[nextPos].state not_eq MazeState::WAY        // 道じゃない
+				and maze_[nextPos].state not_eq MazeState::OUTER_WALL // 外壁じゃない
 			};
 
 			if (canDug)
@@ -124,7 +121,7 @@ std::vector<Maze::MazeState> Maze::Generate(int width, int height)
 			// WAYを設定していく
 			// currPos + 2か、-2,
 			int index = currPos + (nextDir / i);
-			maze_[index] = MazeState::WAY;
+			maze_[index].state = MazeState::WAY;
 		}
 
 		// そして、現在の位置を更新し、
@@ -134,8 +131,8 @@ std::vector<Maze::MazeState> Maze::Generate(int width, int height)
 	}
 
 	// 左上にスタート、右下にゴール(壁の内側)
-	maze_[1 + width_] = MazeState::START;
-	maze_[((length_ - 1) - 1) - width_] = MazeState::GOAL;
+	maze_[1 + width_].state = MazeState::START;
+	maze_[((length_ - 1) - 1) - width_].state = MazeState::GOAL;
 
 	return maze_;
 }
@@ -180,7 +177,7 @@ void Maze::Save()
 	MessageBox(nullptr, "Saved!", "Information", MB_OK);
 }
 
-std::vector<Maze::MazeState>& Maze::Load()
+std::vector<Maze::MazeTile>& Maze::Load()
 {
 	// 準備
 	TCHAR       filePath[255]{};
@@ -202,7 +199,7 @@ std::vector<Maze::MazeState>& Maze::Load()
 
 	if (not(std::filesystem::exists(filePath)))
 	{
-		MessageBox(nullptr, "File is not exists.", "ERROR!", MB_OK);
+		MessageBox(nullptr, "ファイルが存在しません", "ERROR!", MB_OK);
 	}
 
 	std::string line{};
@@ -230,7 +227,15 @@ std::vector<Maze::MazeState>& Maze::Load()
 		for (int i = 0; i < line.size(); i++)
 		{
 			// keyのエラーチェックしなさい。
-			maze_.push_back(mazeLUT_.left.at(line[i]));
+			if (isdigit(line[i]))
+			{
+				maze_.push_back({mazeLUT_.left.at(MazeState::WAY), line[i] - 'c'});
+			}
+			else
+			{
+				maze_.push_back({mazeLUT_.left.at(line[i]), 0});
+			}
+
 		}
 		lineCount++;
 	}
@@ -258,7 +263,7 @@ void Maze::SetOuterWall()
 
 		if (x == 0 || x == width_ - 1 || y == 0 || y == height_ - 1)
 		{
-			maze_[i] = MazeState::OUTER_WALL;
+			maze_[i].state = MazeState::OUTER_WALL;
 		}
 	}
 }
@@ -277,14 +282,14 @@ int Maze::SetRandomFirstPos(std::stack<int>& _intersection,
 		int x = initPos % width_;
 		int y = initPos / width_;
 
-		if (maze_[initPos] != MazeState::OUTER_WALL and
+		if (maze_[initPos].state != MazeState::OUTER_WALL and
 			x % 2 != 0 and y % 2 != 0)
 		{
 			break;
 		}
 		initPos = randMazeIndex(_engine);
 	}
-	maze_[initPos] = MazeState::WAY;
+	maze_[initPos].state = MazeState::WAY;
 	_intersection.push(initPos);
 
 	return initPos;

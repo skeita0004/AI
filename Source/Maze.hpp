@@ -32,10 +32,10 @@ public:
 	~Maze();
 	
 	/// @brief 穴掘り法により、迷路を生成する。
-	std::vector<MazeState> Generate(int width, int height);
+	std::vector<MazeTile> Generate(int width, int height);
 	
 	void Save();
-	std::vector<MazeState>& Load();
+	std::vector<MazeTile>& Load();
 
 	int GetStart();
 	int GetGoal();
@@ -64,7 +64,7 @@ private:
 	int height_;
 	int length_;
 
-	std::vector<MazeState> maze_;
+	std::vector<MazeTile> maze_;
 	
 	typedef boost::bimaps::bimap<char, MazeState> bimap;
 	bimap mazeLUT_;
