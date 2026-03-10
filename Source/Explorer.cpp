@@ -51,7 +51,8 @@ void Explorer::Update()
 	// FindPath() <- 1フレームに１マスごとやってほしいのよね。(西麻布のママより)
 	if (Input::IsKeyHold(KEY_INPUT_RETURN) and enabledSearch_)
 	{
-		FindPathBFS();
+		//FindPathBFS();
+		FindPathDijkstra();
 	}
 }
 
@@ -245,36 +246,33 @@ void Explorer::FindPathBFS()
 
 void Explorer::FindPathDijkstra()
 {
-	static NodeData currNodeData({0, 0}, 0);
+	static DijkstraND currNodeData({0, 0}, 0, 0);
 
 	// Start地点(1, 1)をQueueに入れる
-	static std::queue<NodeData> BFSQueue;
+	static std::priority_queue<DijkstraND> BFSQueue;
 
 	static bool first = true;
 
 	if (first)
 	{
-		BFSQueue.push(NodeData(pStage_->IndexToPoint(pMaze_->GetStart()), 0));
+		BFSQueue.push(DijkstraND(pStage_->IndexToPoint(pMaze_->GetStart()), 0));
 
-		// Queueの先頭をcurrPosに設定
-		//currPos = BFSQueue.front();
-		//BFSQueue.pop();
-		pStage_->SetMazeState(BFSQueue.front().pos, Maze::MazeState::FOUND); // スタート地点を探索済みにする
-		pStage_->SetStepCount(BFSQueue.front().pos, BFSQueue.front().stepCount);
+		pStage_->SetMazeState(BFSQueue.top().pos, Maze::MazeState::FOUND); // スタート地点を探索済みにする
+		pStage_->SetStepCount(BFSQueue.top().pos, BFSQueue.top().stepCount);
 		first = false;
 	}
 
 	{
 		int overStep = 0;
 
-		currNodeData = BFSQueue.front();
+		currNodeData = BFSQueue.top();
 		BFSQueue.pop();
 
 		int currStepCount = pStage_->GetStepCount(currNodeData.pos);
 
 		for (int i = 0; i < MAX_DIR; i++)
 		{
-			NodeData nextNodeData{currNodeData.pos + NEXT_POSITION[i], currStepCount + 1};
+			DijkstraND nextNodeData{currNodeData.pos + NEXT_POSITION[i], currStepCount + 1, pStage_->GetMazePathCost(currNodeData.pos + NEXT_POSITION[i])};
 			Maze::MazeState state = pStage_->GetMazeState(nextNodeData.pos);
 			if (nextNodeData.pos == pStage_->IndexToPoint(pMaze_->GetGoal()))
 			{
@@ -286,7 +284,7 @@ void Explorer::FindPathDijkstra()
 			if (state == Maze::MazeState::WAY)
 			{
 				// いける地点をEnqueue
-				BFSQueue.push(NodeData(nextNodeData));
+				BFSQueue.push(DijkstraND(nextNodeData));
 				pStage_->SetStepCount(nextNodeData.pos, nextNodeData.stepCount); // ループ中のstep数は同じにしたい
 				pStage_->SetMazeState(nextNodeData.pos, Maze::MazeState::FOUND);
 			}
@@ -296,10 +294,10 @@ void Explorer::FindPathDijkstra()
 		{
 			// ここでフラグを下げる
 			enabledSearch_ = false;
-			EtchingBFSPath(currNodeData.stepCount);
-			currNodeData = NodeData(Point(0, 0), 0);
+			EtchingDijkstra(currNodeData.stepCount, 0);
+			currNodeData = DijkstraND(Point(0, 0), 0, 0);
 			first = true;
-			BFSQueue = std::queue<NodeData>();
+			BFSQueue = std::priority_queue<DijkstraND>();
 			return;
 		}
 	}
@@ -320,6 +318,40 @@ void Explorer::EtchingBFSPath(int _stepCount)
 		{
 			Point nextPos{currPos + NEXT_POSITION[i]};
 			if (pStage_->GetStepCount(nextPos) == _stepCount - 1)
+			{
+				_stepCount--;
+				currPos = nextPos;
+				pStage_->SetMazeState(currPos, Maze::MazeState::ETCHING);
+				break;
+			}
+		}
+
+		if (_stepCount == 0)
+		{
+			break;
+		}
+	}
+
+	for (int i = 0; i < pStage_->GetMazeSize(); i++)
+	{
+		if (pStage_->GetMazeState(pStage_->IndexToPoint(i)) == Maze::MazeState::FOUND)
+		{
+			pStage_->SetMazeState(pStage_->IndexToPoint(i), Maze::MazeState::WAY);
+		}
+	}
+}
+
+void Explorer::EtchingDijkstra(int _stepCount, int _cost)
+{
+	Point currPos{pStage_->IndexToPoint(pMaze_->GetGoal())};
+	pStage_->SetMazeState(currPos, Maze::MazeState::ETCHING);
+
+	while (true)
+	{
+		for (int i = 0; i < DIR::MAX_DIR; i++)
+		{
+			Point nextPos{currPos + NEXT_POSITION[i]};
+			if (pStage_->GetStepCount(nextPos) + pStage_->GetMazePathCost(nextPos) < _stepCount + pStage_->GetStepCount(currPos))
 			{
 				_stepCount--;
 				currPos = nextPos;

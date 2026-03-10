@@ -21,6 +21,7 @@ public:
 	int  GetStepCount(Point _pos);
 
 	Maze::MazeState GetMazeState(Point _pos);
+	int             GetMazePathCost(Point _pos);
 
 	Point IndexToPoint(int _index);
 	int   PointToIndex(Point _pos);
@@ -41,7 +42,7 @@ private:
 
 	struct TileInfo
 	{
-		Maze::MazeState mzState;
+		Maze::MazeTile  mzTile;
 		int             stepCount;
 	};
 

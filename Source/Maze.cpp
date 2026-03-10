@@ -164,7 +164,7 @@ void Maze::Save()
 	for (int i = 0; i < maze_.size(); i++)
 	{
 		// キーのエラーチェックしないと駄目だよ！
-		file << mazeLUT_.right.at(maze_[i]);
+		file << mazeLUT_.right.at(maze_[i].state);
 
 		if (i % width_ + 1 == width_)
 		{
@@ -229,7 +229,7 @@ std::vector<Maze::MazeTile>& Maze::Load()
 			// keyのエラーチェックしなさい。
 			if (isdigit(line[i]))
 			{
-				maze_.push_back({mazeLUT_.left.at(MazeState::WAY), line[i] - 'c'});
+				maze_.push_back({mazeLUT_.left.at(' '), line[i] - '0'});
 			}
 			else
 			{

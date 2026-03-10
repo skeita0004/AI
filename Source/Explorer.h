@@ -24,6 +24,8 @@ public:
 	/// @brief BFSで探索した経路から、ゴールまでの道を可視化する
 	void EtchingBFSPath(int _stepCount);
 
+	void EtchingDijkstra(int _stepCount, int _cost);
+
 	void SetPosition(Point _position)
 	{
 		position_ = _position;
@@ -51,6 +53,22 @@ private:
 		{}
 		Point pos;
 		int   stepCount;
+	};
+
+	struct DijkstraND
+	{
+		DijkstraND(Point _pos, int _cost) :
+			pos(_pos),
+			cost(_cost)
+		{}
+
+		Point pos;
+		int cost;
+
+		bool operator<(const DijkstraND& other) const
+		{
+			return cost > other.cost;
+		}
 	};
 
 	int hImage_;

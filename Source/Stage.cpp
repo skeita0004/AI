@@ -11,9 +11,9 @@ Stage::Stage() :
 	pMaze_ = new Maze(0, 0);
 
 
-	std::vector<Maze::MazeState> tmp;
-	//tmp = pMaze_->Load();
-	tmp = pMaze_->Generate(21, 21);
+	std::vector<Maze::MazeTile> tmp;
+	tmp = pMaze_->Load();
+	//tmp = pMaze_->Generate(21, 21);
 	int mazeWidth = pMaze_->GetWidth();
 
 	mazeData_.resize(tmp.size());
@@ -21,7 +21,7 @@ Stage::Stage() :
 	int i = 0;
 	for (auto item : tmp)
 	{
-		mazeData_[i].mzState = item;
+		mazeData_[i].mzTile = item;
 		mazeData_[i].stepCount = INT32_MAX;
 		i++;
 	}
@@ -53,7 +53,7 @@ void Stage::Draw()
 		int y = i / mazeWidth;
 		
 
-		switch (mazeData_[i].mzState)
+		switch (mazeData_[i].mzTile.state)
 		{
 			case Maze::MazeState::WALL:
 				DrawBox(32 * x,
@@ -90,6 +90,10 @@ void Stage::Draw()
 						32 * y + 32,
 						0xffffff,
 						TRUE);
+				DrawFormatString(32 * x + 24,
+								 32 * y + 16,
+								 0xff0000,
+								 "%d", mazeData_[i].mzTile.cost);
 				break;
 			case Maze::MazeState::START:
 				DrawBox(32 * x,
@@ -137,6 +141,10 @@ void Stage::Draw()
 								 32 * y,
 								 0x000000,
 								 "%d", mazeData_[i].stepCount);
+				DrawFormatString(32 * x + 24,
+								 32 * y + 16,
+								 0xff0000,
+								 "%d", mazeData_[i].mzTile.cost);
 				break;
 
 			case Maze::MazeState::ETCHING:
@@ -157,11 +165,17 @@ void Stage::Draw()
 								 32 * y,
 								 0x000000,
 								 "%d", mazeData_[i].stepCount);
+				DrawFormatString(32 * x + 24,
+								 32 * y + 16,
+								 0xff0000,
+								 "%d", mazeData_[i].mzTile.cost);
 				break;
 			default:
+
 				break;
 		}
 	}
+
 	for (int x = 0; x < mazeWidth; x++)
 	{
 		for (int y = 0; y < mazeHeight; y++)
@@ -178,7 +192,7 @@ void Stage::Draw()
 void Stage::SetMazeState(Point _pos, Maze::MazeState _state)
 {
 	int index = PointToIndex(_pos);
-	mazeData_[index].mzState = _state;
+	mazeData_[index].mzTile.state = _state;
 }
 
 void Stage::SetStepCount(Point _pos, int _stepCount)
@@ -196,7 +210,13 @@ int Stage::GetStepCount(Point _pos)
 Maze::MazeState Stage::GetMazeState(Point _pos)
 {
 	int index = pMaze_->GetWidth() * _pos.y + _pos.x;
-	return mazeData_[index].mzState;
+	return mazeData_[index].mzTile.state;
+}
+
+int Stage::GetMazePathCost(Point _pos)
+{
+	int index = PointToIndex(_pos);
+	return mazeData_[index].mzTile.cost;
 }
 
 Point Stage::IndexToPoint(int _index)
